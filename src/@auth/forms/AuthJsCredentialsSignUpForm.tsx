@@ -1,14 +1,16 @@
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import _ from 'lodash';
-import TextField from '@mui/material/TextField';
+'use client';
+import { Controller, useForm } from 'react-hook-form';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Button from '@mui/material/Button';
-import { signIn } from 'next-auth/react';
+import TextField from '@mui/material/TextField';
+import _ from 'lodash';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import FormHelperText from '@mui/material/FormHelperText';
+import FormLabel from '@mui/material/FormLabel';
+import { signIn } from 'next-auth/react';
 import { Alert } from '@mui/material';
 import signinErrors from './signinErrors';
 
@@ -17,7 +19,7 @@ import signinErrors from './signinErrors';
  */
 const schema = z
 	.object({
-		displayName: z.string().nonempty('You must enter your name'),
+		name: z.string().nonempty('You must enter your name'),
 		email: z.string().email('You must enter a valid email').nonempty('You must enter an email'),
 		password: z
 			.string()
@@ -32,7 +34,7 @@ const schema = z
 	});
 
 const defaultValues = {
-	displayName: '',
+	name: '',
 	email: '',
 	password: '',
 	passwordConfirm: '',
@@ -45,7 +47,7 @@ export type FormType = {
 	email: string;
 };
 
-function AuthJsCredentialsSignUpForm() {
+function SignUpPageForm() {
 	const { control, formState, handleSubmit, setError } = useForm({
 		mode: 'onChange',
 		defaultValues,
@@ -76,10 +78,10 @@ function AuthJsCredentialsSignUpForm() {
 		<form
 			name="registerForm"
 			noValidate
-			className="flex w-full flex-col justify-center"
+			className="mt-8 flex w-full flex-col justify-center gap-4"
 			onSubmit={handleSubmit(onSubmit)}
 		>
-			{errors?.root?.message && (
+						{errors?.root?.message && (
 				<Alert
 					className="mb-8"
 					severity="error"
@@ -92,74 +94,82 @@ function AuthJsCredentialsSignUpForm() {
 				</Alert>
 			)}
 			<Controller
-				name="displayName"
+				name="name"
 				control={control}
 				render={({ field }) => (
-					<TextField
-						{...field}
-						className="mb-6"
-						label="Display name"
-						autoFocus
-						type="name"
-						error={!!errors.displayName}
-						helperText={errors?.displayName?.message}
-						variant="outlined"
-						required
-						fullWidth
-					/>
+					<FormControl>
+						<FormLabel htmlFor="name">Name</FormLabel>
+						<TextField
+							{...field}
+							id="name"
+							autoFocus
+							type="name"
+							error={!!errors.name}
+							helperText={errors?.name?.message}
+							required
+							fullWidth
+						/>
+					</FormControl>
 				)}
 			/>
+
 			<Controller
 				name="email"
 				control={control}
 				render={({ field }) => (
-					<TextField
-						{...field}
-						className="mb-6"
-						label="Email"
-						type="email"
-						error={!!errors.email}
-						helperText={errors?.email?.message}
-						variant="outlined"
-						required
-						fullWidth
-					/>
+					<FormControl>
+						<FormLabel htmlFor="email">Email</FormLabel>
+						<TextField
+							{...field}
+							id="email"
+							type="email"
+							error={!!errors.email}
+							helperText={errors?.email?.message}
+							required
+							fullWidth
+						/>
+					</FormControl>
 				)}
 			/>
+
 			<Controller
 				name="password"
 				control={control}
 				render={({ field }) => (
-					<TextField
-						{...field}
-						className="mb-6"
-						label="Password"
-						type="password"
-						error={!!errors.password}
-						helperText={errors?.password?.message}
-						variant="outlined"
-						required
-						fullWidth
-					/>
+					<FormControl>
+						<FormLabel htmlFor="password">Password</FormLabel>
+						<TextField
+							{...field}
+							id="password"
+							type="password"
+							error={!!errors.password}
+							helperText={errors?.password?.message}
+							required
+							fullWidth
+						/>
+					</FormControl>
 				)}
 			/>
+
 			<Controller
 				name="passwordConfirm"
 				control={control}
 				render={({ field }) => (
-					<TextField
-						{...field}
-						className="mb-6"
-						label="Password (Confirm)"
-						type="password"
-						error={!!errors.passwordConfirm}
-						helperText={errors?.passwordConfirm?.message}
-						variant="outlined"
-						required
-						fullWidth
-					/>
+					<FormControl>
+						<FormLabel htmlFor="passwordConfirm">Password (Confirm)</FormLabel>
+						<TextField
+							{...field}
+							id="passwordConfirm"
+							type="password"
+							error={!!errors.passwordConfirm}
+							helperText={errors?.passwordConfirm?.message}
+							required
+							fullWidth
+						/>
+					</FormControl>
 				)}
 			/>
+
 			<Controller
 				name="acceptTermsConditions"
 				control={control}
@@ -178,14 +188,15 @@ function AuthJsCredentialsSignUpForm() {
 					</FormControl>
 				)}
 			/>
+
 			<Button
 				variant="contained"
 				color="secondary"
-				className="mt-6 w-full"
+				className="w-full"
 				aria-label="Register"
 				disabled={_.isEmpty(dirtyFields) || !isValid}
 				type="submit"
-				size="large"
+				size="medium"
 			>
 				Create your free account
 			</Button>
@@ -193,4 +204,4 @@ function AuthJsCredentialsSignUpForm() {
 	);
 }
 
-export default AuthJsCredentialsSignUpForm;
+export default SignUpPageForm;

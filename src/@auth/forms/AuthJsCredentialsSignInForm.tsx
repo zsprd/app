@@ -1,17 +1,20 @@
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
-import { z } from 'zod';
-import _ from 'lodash';
-import TextField from '@mui/material/TextField';
+import { Controller, useForm } from 'react-hook-form';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import Link from '@fuse/core/Link';
-import Button from '@mui/material/Button';
+import _ from 'lodash';
+import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import FormLabel from '@mui/material/FormLabel';
 import { signIn } from 'next-auth/react';
 import { Alert } from '@mui/material';
 import signinErrors from './signinErrors';
+import { useEffect } from 'react';
 
 /**
  * Form Validation Schema
@@ -20,7 +23,7 @@ const schema = z.object({
 	email: z.string().email('You must enter a valid email').nonempty('You must enter an email'),
 	password: z
 		.string()
-		.min(4, 'Password is too short - must be at least 4 chars.')
+		.min(8, 'Password is too short - must be at least 8 chars.')
 		.nonempty('Please enter your password.'),
 	remember: z.boolean().optional()
 });
@@ -33,7 +36,7 @@ const defaultValues = {
 	remember: true
 };
 
-function AuthJsCredentialsSignInForm() {
+function SignInPageForm() {
 	const { control, formState, handleSubmit, setValue, setError } = useForm<FormType>({
 		mode: 'onChange',
 		defaultValues,
@@ -75,10 +78,10 @@ function AuthJsCredentialsSignInForm() {
 		<form
 			name="loginForm"
 			noValidate
-			className="flex w-full flex-col justify-center"
+			className="flex w-full flex-col justify-center gap-4"
 			onSubmit={handleSubmit(onSubmit)}
 		>
-			{errors?.root?.message && (
+						{errors?.root?.message && (
 				<Alert
 					className="mb-8"
 					severity="error"
@@ -94,37 +97,39 @@ function AuthJsCredentialsSignInForm() {
 				name="email"
 				control={control}
 				render={({ field }) => (
-					<TextField
-						{...field}
-						className="mb-6"
-						label="Email"
-						autoFocus
-						type="email"
-						error={!!errors.email}
-						helperText={errors?.email?.message}
-						variant="outlined"
-						required
-						fullWidth
-					/>
+					<FormControl>
+						<FormLabel htmlFor="email">Email address</FormLabel>
+						<TextField
+							{...field}
+							autoFocus
+							type="email"
+							error={!!errors.email}
+							helperText={errors?.email?.message}
+							required
+							fullWidth
+						/>
+					</FormControl>
 				)}
 			/>
+
 			<Controller
 				name="password"
 				control={control}
 				render={({ field }) => (
-					<TextField
-						{...field}
-						className="mb-6"
-						label="Password"
-						type="password"
-						error={!!errors.password}
-						helperText={errors?.password?.message}
-						variant="outlined"
-						required
-						fullWidth
-					/>
+					<FormControl>
+						<FormLabel htmlFor="password">Password</FormLabel>
+						<TextField
+							{...field}
+							type="password"
+							error={!!errors.password}
+							helperText={errors?.password?.message}
+							required
+							fullWidth
+						/>
+					</FormControl>
 				)}
 			/>
+
 			<div className="flex flex-col items-center justify-center sm:flex-row sm:justify-between">
 				<Controller
 					name="remember"
@@ -146,24 +151,26 @@ function AuthJsCredentialsSignInForm() {
 
 				<Link
 					className="text-md font-medium"
-					to="/#"
+					to="/forgot-password"
 				>
 					Forgot password?
 				</Link>
 			</div>
+
 			<Button
 				variant="contained"
 				color="secondary"
-				className="mt-4 w-full"
+				className="w-full"
 				aria-label="Sign in"
 				disabled={_.isEmpty(dirtyFields) || !isValid}
 				type="submit"
-				size="large"
+				size="medium"
 			>
 				Sign in
 			</Button>
+
 		</form>
 	);
 }
 
-export default AuthJsCredentialsSignInForm;
+export default SignInPageForm;

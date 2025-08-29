@@ -63,13 +63,6 @@ function AuthJsProviderSelect() {
 							<span className="flex flex-1">Sign in with {provider.name}</span>
 						</Button>
 					))}
-				<Button
-					className="text-md"
-					href="https://authjs.dev/getting-started#official-providers"
-					target="_blank"
-				>
-					+ more auth providers
-				</Button>
 			</div>
 		</div>
 	);

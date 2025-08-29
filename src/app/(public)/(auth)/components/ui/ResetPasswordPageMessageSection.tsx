@@ -2,14 +2,11 @@ import AvatarGroup from '@mui/material/AvatarGroup';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 
-function AuthPagesMessageSection() {
+function ResetPasswordPageMessageSection() {
 	return (
 		<Box
 			className="relative hidden h-full flex-auto items-center justify-center overflow-hidden p-16 md:flex lg:px-28"
-			sx={{
-				backgroundColor: 'primary.dark',
-				color: 'primary.contrastText'
-			}}
+			sx={{ backgroundColor: 'primary.dark', color: 'primary.contrastText' }}
 		>
 			<svg
 				className="pointer-events-none absolute inset-0"
@@ -104,4 +101,4 @@ function AuthPagesMessageSection() {
 	);
 }
 
-export default AuthPagesMessageSection;
+export default ResetPasswordPageMessageSection;
