@@ -1,74 +1,91 @@
+import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
+import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
-import Link from '@fuse/core/Link';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { darken } from '@mui/material/styles';
-import Tooltip from '@mui/material/Tooltip';
-import clsx from 'clsx';
-import Popover, { PopoverProps } from '@mui/material/Popover';
+import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
+import { styled } from '@mui/material/styles';
+import { PopoverProps } from '@mui/material/Popover';
+import Link from '@fuse/core/Link';
 import useUser from '@auth/useUser';
+import clsx from 'clsx';
+import Tooltip from '@mui/material/Tooltip';
+import { useRouter } from 'next/navigation';
 
 type UserMenuProps = {
 	className?: string;
-	popoverProps?: Partial<PopoverProps>;
-	arrowIcon?: string;
-	dense?: boolean;
 	onlyAvatar?: boolean;
+	dense?: boolean;
+	arrowIcon?: string;
+	popoverProps?: Partial<PopoverProps>;
 };
 
-/**
- * The user menu.
- */
-function UserMenu(props: UserMenuProps) {
-	const { className, popoverProps, arrowIcon = 'lucide:chevron-up', dense = false, onlyAvatar = false } = props;
-	const { data: user, signOut, isGuest } = useUser();
+const StyledButton = styled(Button)(({ theme }) => ({
+	color: theme.palette.text.primary,
+	'&:hover': {
+		backgroundColor: darken(theme.palette.background.default, 0.04)
+	}
+}));
+
+function UserMenu({
+	className = '',
+	onlyAvatar = false,
+	dense = false,
+	arrowIcon = 'lucide:chevron-down',
+	popoverProps
+}: UserMenuProps) {
+	const { data: user, isGuest } = useUser();
+	const router = useRouter();
 	const [userMenu, setUserMenu] = useState<HTMLElement | null>(null);
-	const userMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-		setUserMenu(event.currentTarget);
-	};
 
 	const userMenuClose = () => {
 		setUserMenu(null);
 	};
 
-	if (!user) {
-		return null;
-	}
+	const userMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+		setUserMenu(event.currentTarget);
+	};
+
+	// Updated sign-out handler to redirect to sign-out page first
+	const handleSignOut = async () => {
+		userMenuClose();
+		router.push('/sign-out'); // Go to sign-out page
+	};
 
 	return (
 		<>
-			<Button
-				className={clsx(
-					'user-menu flex shrink-0 justify-start',
-					onlyAvatar ? 'min-w-0 p-0' : dense ? 'h-9 min-h-9 gap-1.5 px-1' : 'h-14 min-h-14 gap-3',
-					className
-				)}
+			<StyledButton
+				className={clsx('min-h-10 min-w-10 px-2 md:px-4', dense ? 'p-2' : 'p-4', className)}
 				onClick={userMenuClick}
 				color="inherit"
 			>
 				{user?.photoURL ? (
 					<Avatar
-						sx={(theme) => ({
-							background: theme.vars.palette.background.default,
-							color: theme.vars.palette.text.secondary
-						})}
-						className={clsx('avatar rounded-lg', dense ? 'h-7 w-7' : 'h-10 w-10')}
-						alt="user photo"
-						src={user?.photoURL}
-						variant="rounded"
-					/>
+						sx={{
+							background: (theme) =>
+								theme.palette.mode === 'light'
+									? darken(theme.palette.background.default, 0.04)
+									: theme.palette.text.secondary
+						}}
+						className="text-32 font-bold"
+						src={user.photoURL}
+						alt={user.displayName}
+					>
+						{user?.displayName?.[0]}
+					</Avatar>
 				) : (
 					<Avatar
-						sx={(theme) => ({
-							background: (theme) => darken(theme.palette.background.default, 0.05),
-							color: theme.vars.palette.text.secondary
-						})}
-						className={clsx('avatar h-10 w-10', dense && 'h-8 w-8')}
+						sx={{
+							background: (theme) =>
+								theme.palette.mode === 'light'
+									? darken(theme.palette.background.default, 0.04)
+									: theme.palette.text.secondary
+						}}
+						className="text-32 font-bold"
 					>
 						{user?.displayName?.[0]}
 					</Avatar>
@@ -116,7 +133,7 @@ function UserMenu(props: UserMenuProps) {
 						</div>
 					</>
 				)}
-			</Button>
+			</StyledButton>
 			<Popover
 				open={Boolean(userMenu)}
 				anchorEl={userMenu}
@@ -181,11 +198,7 @@ function UserMenu(props: UserMenuProps) {
 							</ListItemIcon>
 							<ListItemText primary="Inbox" />
 						</MenuItem>
-						<MenuItem
-							onClick={() => {
-								signOut();
-							}}
-						>
+						<MenuItem onClick={handleSignOut}>
 							<ListItemIcon>
 								<FuseSvgIcon>lucide:square-arrow-right</FuseSvgIcon>
 							</ListItemIcon>

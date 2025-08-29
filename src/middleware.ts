@@ -15,6 +15,7 @@ const protectedRoutes = [
 const authRoutes = [
 	'/sign-in',
 	'/sign-up', 
+	'/sign-out',
 	'/forgot-password',
 	'/reset-password'
 ];
@@ -33,8 +34,13 @@ export default auth((req) => {
 		nextUrl.pathname.startsWith(route)
 	);
 
-	// Redirect logged-in users away from auth pages
-	if (isLoggedIn && isAuthRoute) {
+	// Allow access to sign-out page regardless of auth status
+	if (nextUrl.pathname === '/sign-out') {
+		return NextResponse.next();
+	}
+
+	// Redirect logged-in users away from auth pages (except sign-out)
+	if (isLoggedIn && isAuthRoute && nextUrl.pathname !== '/sign-out') {
 		return NextResponse.redirect(new URL('/', nextUrl));
 	}
 

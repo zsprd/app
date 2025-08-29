@@ -1,6 +1,20 @@
-import _ from 'lodash';
 import { PartialDeep } from 'type-fest';
 import { User } from '@auth/user';
+
+/**
+ * Native JavaScript implementation of lodash defaults
+ */
+function defaults(obj: any, defaultValues: any): any {
+	const result = { ...obj };
+	
+	for (const key in defaultValues) {
+		if (result[key] === undefined || result[key] === null) {
+			result[key] = defaultValues[key];
+		}
+	}
+	
+	return result;
+}
 
 /**
  * Creates a new user object with the specified data.
@@ -8,7 +22,7 @@ import { User } from '@auth/user';
 function UserModel(data?: PartialDeep<User>): User {
 	data = data || {};
 
-	return _.defaults(data, {
+	return defaults(data, {
 		id: null,
 		role: null, // guest
 		displayName: null,
