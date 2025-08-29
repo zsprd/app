@@ -10,6 +10,7 @@ export type User = {
 	displayName: string;
 	photoURL?: string;
 	email?: string;
+	password?: string; // Added for authentication - only used server-side
 	shortcuts?: string[];
 	settings?: PartialDeep<FuseSettingsConfigType>;
 	loginRedirectUrl?: string; // The URL to redirect to after login.
