@@ -10,6 +10,9 @@ import _ from 'lodash';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormLabel from '@mui/material/FormLabel';
+import { Alert, CircularProgress } from '@mui/material';
+import { useState } from 'react';
+import { authRequestPasswordReset } from '@auth/authApi';
 
 /**
  * Form Validation Schema
@@ -18,30 +21,70 @@ const schema = z.object({
 	email: z.string().email('You must enter a valid email').nonempty('You must enter an email')
 });
 
+type FormType = z.infer<typeof schema>;
+
 const defaultValues = {
 	email: ''
 };
 
 function ForgotPasswordPageForm() {
-	const { control, formState, handleSubmit, reset } = useForm({
+	const { control, formState, handleSubmit, reset } = useForm<FormType>({
 		mode: 'onChange',
 		defaultValues,
 		resolver: zodResolver(schema)
 	});
 
 	const { isValid, dirtyFields, errors } = formState;
+	const [isLoading, setIsLoading] = useState(false);
+	const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-	function onSubmit() {
-		reset(defaultValues);
+	async function onSubmit(formData: FormType) {
+		setIsLoading(true);
+		setMessage(null);
+
+		try {
+			const result = await authRequestPasswordReset(formData.email);
+			
+			if (result.success) {
+				setMessage({ type: 'success', text: result.message });
+				reset(defaultValues);
+			} else {
+				setMessage({ type: 'error', text: result.message });
+			}
+		} catch (error) {
+			setMessage({ 
+				type: 'error', 
+				text: 'An error occurred. Please try again.' 
+			});
+		} finally {
+			setIsLoading(false);
+		}
 	}
 
 	return (
 		<form
-			name="registerForm"
+			name="forgotPasswordForm"
 			noValidate
 			className="mt-4 flex w-full flex-col justify-center gap-4"
 			onSubmit={handleSubmit(onSubmit)}
 		>
+			{message && (
+				<Alert
+					className="mb-4"
+					severity={message.type}
+					sx={(theme) => ({
+						backgroundColor: message.type === 'error' 
+							? theme.palette.error.light 
+							: theme.palette.success.light,
+						color: message.type === 'error' 
+							? theme.palette.error.dark 
+							: theme.palette.success.dark
+					})}
+				>
+					{message.text}
+				</Alert>
+			)}
+
 			<Controller
 				name="email"
 				control={control}
@@ -56,6 +99,7 @@ function ForgotPasswordPageForm() {
 							helperText={errors?.email?.message}
 							required
 							fullWidth
+							placeholder="Enter your email address"
 						/>
 					</FormControl>
 				)}
@@ -65,12 +109,19 @@ function ForgotPasswordPageForm() {
 				variant="contained"
 				color="secondary"
 				className="w-full"
-				aria-label="Register"
-				disabled={_.isEmpty(dirtyFields) || !isValid}
+				aria-label="Send reset link"
+				disabled={_.isEmpty(dirtyFields) || !isValid || isLoading}
 				type="submit"
 				size="medium"
 			>
-				Send reset link
+				{isLoading ? (
+					<>
+						<CircularProgress size={20} className="mr-2" />
+						Sending...
+					</>
+				) : (
+					'Send reset link'
+				)}
 			</Button>
 
 			<Typography

@@ -1,31 +1,82 @@
 import mockApi from 'src/@mock-utils/mockApi';
 import { NextRequest, NextResponse } from 'next/server';
 import { User } from '@auth/user';
+import { v4 as uuidv4 } from 'uuid';
 
-export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
-	const { id } = await props.params;
+/**
+ * GET /api/mock/users - Get all users (admin only)
+ */
+export async function GET(req: NextRequest) {
+	try {
+		const api = mockApi('users');
+		const users = await api.findAll();
+		
+		// Remove passwords from response for security
+		const safeUsers = users.map((user: User) => {
+			const { password, ...safeUser } = user;
+			return safeUser;
+		});
 
-	const api = mockApi('users');
-	const item = await api.find(id);
-
-	if (!item) {
-		return NextResponse.json({ message: 'User not found' }, { status: 404 });
+		return NextResponse.json(safeUsers, { status: 200 });
+	} catch (error) {
+		console.error('Error fetching users:', error);
+		return NextResponse.json(
+			{ message: 'Failed to fetch users' }, 
+			{ status: 500 }
+		);
 	}
-
-	return NextResponse.json(item, { status: 200 });
 }
 
-export async function PUT(req: NextRequest, props: { params: Promise<{ id: string }> }) {
-	const { id } = await props.params;
+/**
+ * POST /api/mock/users - Create new user
+ */
+export async function POST(req: NextRequest) {
+	try {
+		const userData = await req.json() as Partial<User>;
+		
+		// Validate required fields
+		if (!userData.email) {
+			return NextResponse.json(
+				{ message: 'Email is required' }, 
+				{ status: 400 }
+			);
+		}
 
-	const api = mockApi('users');
-	const data = (await req.json()) as User;
+		// Check if user already exists
+		const api = mockApi('users');
+		const existingUser = await api.find({ email: userData.email });
+		
+		if (existingUser) {
+			return NextResponse.json(
+				{ message: 'User already exists' }, 
+				{ status: 409 }
+			);
+		}
 
-	const updatedUser = await api.update(id, data);
+		// Create new user with generated ID
+		const newUser = {
+			...userData,
+			id: uuidv4(),
+			role: userData.role || ['user'],
+			settings: userData.settings || {
+				layout: {},
+				theme: {}
+			},
+			shortcuts: userData.shortcuts || [],
+			loginRedirectUrl: userData.loginRedirectUrl || '/'
+		};
 
-	if (!updatedUser) {
-		return NextResponse.json({ message: 'User not found' }, { status: 404 });
+		const createdUser = await api.create(newUser);
+
+		// Remove password from response
+		const { password, ...safeUser } = createdUser as User;
+
+		return NextResponse.json(safeUser, { status: 201 });
+	} catch (error) {
+		console.error('Error creating user:', error);
+		return NextResponse.json(
+			{ message: 'Failed to create user' }, 
+			{ status: 500 }
+		);
 	}
-
-	return NextResponse.json(updatedUser, { status: 200 });
 }

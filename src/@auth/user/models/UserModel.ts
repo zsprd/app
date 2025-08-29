@@ -14,6 +14,7 @@ function UserModel(data?: PartialDeep<User>): User {
 		displayName: null,
 		photoURL: '',
 		email: '',
+		password: '',
 		shortcuts: [],
 		settings: {},
 		loginRedirectUrl: '/'

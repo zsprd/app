@@ -9,7 +9,8 @@ import type { Provider } from 'next-auth/providers';
 import Credentials from 'next-auth/providers/credentials';
 import Facebook from 'next-auth/providers/facebook';
 import Google from 'next-auth/providers/google';
-import { authGetDbUserByEmail, authCreateDbUser } from './authApi';
+import { authGetDbUserByEmail, authCreateDbUser, authValidateUserCredentials } from './authApi';
+import bcrypt from 'bcryptjs';
 
 const storage = createStorage({
 	driver: process.env.VERCEL
@@ -23,66 +24,135 @@ const storage = createStorage({
 
 export const providers: Provider[] = [
 	Credentials({
-		authorize(formInput) {
-			/**
-			 * !! This is just for demonstration purposes
-			 * You can create your own validation logic here
-			 * !! Do not use this in production
-			 */
+		name: 'credentials',
+		credentials: {
+			email: { label: 'Email', type: 'email' },
+			password: { label: 'Password', type: 'password' },
+			displayName: { label: 'Display Name', type: 'text' },
+			formType: { label: 'Form Type', type: 'text' }
+		},
+		async authorize(formInput) {
+			try {
+				const { email, password, displayName, formType } = formInput;
 
-			/**
-			 * Sign in
-			 */
-			if (formInput.formType === 'signin') {
-				if (formInput.password === '' || formInput.email !== 'admin@fusetheme.com') {
+				if (!email || !password) {
+					console.log('Missing email or password');
 					return null;
 				}
-			}
 
-			/**
-			 * Sign up
-			 */
-			if (formInput.formType === 'signup') {
-				if (formInput.password === '' || formInput.email === '') {
+				/**
+				 * Sign In Logic
+				 */
+				if (formType === 'signin') {
+					// Validate user credentials against mock database
+					const isValid = await authValidateUserCredentials(email, password);
+					
+					if (!isValid) {
+						console.log('Invalid credentials for signin');
+						return null;
+					}
+
+					return {
+						id: email,
+						email: email,
+						name: displayName || email.split('@')[0]
+					};
+				}
+
+				/**
+				 * Sign Up Logic
+				 */
+				if (formType === 'signup') {
+					if (!displayName) {
+						console.log('Missing display name for signup');
+						return null;
+					}
+
+					// Check if user already exists
+					try {
+						const existingUserResponse = await authGetDbUserByEmail(email);
+						if (existingUserResponse.ok) {
+							console.log('User already exists');
+							return null; // User already exists
+						}
+					} catch (error) {
+						// User doesn't exist, which is good for signup
+					}
+
+					// Create new user
+					const hashedPassword = await bcrypt.hash(password, 12);
+					const newUserResponse = await authCreateDbUser({
+						email: email,
+						password: hashedPassword,
+						displayName: displayName,
+						role: ['user'], // Default role for new users
+						photoURL: '',
+						settings: {
+							layout: {},
+							theme: {}
+						},
+						shortcuts: []
+					});
+
+					if (newUserResponse.ok) {
+						return {
+							id: email,
+							email: email,
+							name: displayName
+						};
+					}
+
+					console.log('Failed to create user');
 					return null;
 				}
-			}
 
-			/**
-			 * Response Success with email
-			 */
-			return {
-				email: formInput?.email as string
-			};
+				return null;
+			} catch (error) {
+				console.error('Auth error:', error);
+				return null;
+			}
 		}
 	}),
-	Google,
-	Facebook
+	Google({
+		clientId: process.env.AUTH_GOOGLE_ID || '',
+		clientSecret: process.env.AUTH_GOOGLE_SECRET || ''
+	}),
+	Facebook({
+		clientId: process.env.AUTH_FACEBOOK_ID || '',
+		clientSecret: process.env.AUTH_FACEBOOK_SECRET || ''
+	})
 ];
 
 const config = {
 	theme: { logo: '/assets/images/logo/logo.svg' },
 	adapter: UnstorageAdapter(storage),
 	pages: {
-		signIn: '/sign-in'
+		signIn: '/sign-in',
+		signUp: '/sign-up',
+		forgotPassword: '/forgot-password',
+		resetPassword: '/reset-password'
 	},
 	providers,
 	basePath: '/auth',
 	trustHost: true,
 	callbacks: {
 		authorized() {
-			/** Checkout information to how to use middleware for authorization
-			 * https://next-auth.js.org/configuration/nextjs#middleware
-			 */
-			return true;
+			return true; // We'll handle authorization in middleware
 		},
-		jwt({ token, trigger, account, user }) {
+		jwt({ token, trigger, account, user, session }) {
 			if (trigger === 'update') {
 				token.name = user.name;
 			}
 
 			if (account?.provider === 'keycloak') {
 				return { ...token, accessToken: account.access_token };
+			}
+
+			// Include user info in JWT token
+			if (user) {
+				token.id = user.id;
+				token.email = user.email;
+				token.name = user.name;
 			}
 
 			return token;
@@ -92,44 +162,46 @@ const config = {
 				session.accessToken = token.accessToken;
 			}
 
-			if (session) {
+			if (session?.user?.email) {
 				try {
-					/**
-					 * Get the session user from database
-					 */
+					// Get the session user from database
 					const response = await authGetDbUserByEmail(session.user.email);
 
-					const userDbData = (await response.json()) as User;
+					if (response.ok) {
+						const userDbData = (await response.json()) as User;
+						session.db = userDbData;
+						session.user.id = userDbData.id;
+						session.user.name = userDbData.displayName;
+						session.user.image = userDbData.photoURL;
+					} else {
+						// If user not found, create a new user (for OAuth providers)
+						const newUserResponse = await authCreateDbUser({
+							email: session.user.email,
+							role: ['user'],
+							displayName: session.user.name || session.user.email.split('@')[0],
+							photoURL: session.user.image || '',
+							settings: {
+								layout: {},
+								theme: {}
+							},
+							shortcuts: []
+						});
 
-					session.db = userDbData;
+						if (newUserResponse.ok) {
+							const newUser = (await newUserResponse.json()) as User;
+							session.db = newUser;
+							session.user.id = newUser.id;
+						}
+					}
 
 					return session;
 				} catch (error) {
-					const errorStatus = error?.status;
-
-					/** If user not found, create a new user */
-					if (errorStatus === 404) {
-						const newUserResponse = await authCreateDbUser({
-							email: session.user.email,
-							role: ['admin'],
-							displayName: session.user.name,
-							photoURL: session.user.image
-						});
-
-						const newUser = (await newUserResponse.json()) as User;
-
-						console.error('Error fetching user data:', error);
-
-						session.db = newUser;
-
-						return session;
-					}
-
-					throw error;
+					console.error('Error in session callback:', error);
+					return session;
 				}
 			}
 
-			return null;
+			return session;
 		}
 	},
 	experimental: {
