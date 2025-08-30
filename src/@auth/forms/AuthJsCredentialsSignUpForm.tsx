@@ -101,7 +101,7 @@ function SignUpPageForm() {
 		<form
 			name="registerForm"
 			noValidate
-			className="mt-8 flex w-full flex-col justify-center gap-4"
+			className="mt-4 flex w-full flex-col justify-center gap-4"
 			onSubmit={handleSubmit(onSubmit)}
 		>
 			{errors?.root?.message && (

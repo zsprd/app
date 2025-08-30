@@ -4,7 +4,6 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import Link from '@fuse/core/Link';
 import _ from 'lodash';
 import { z } from 'zod';
@@ -101,7 +100,7 @@ function SignInPageForm() {
 		<form
 			name="loginForm"
 			noValidate
-			className="flex w-full flex-col justify-center gap-4"
+			className="mt-4 flex w-full flex-col justify-center gap-4"
 			onSubmit={handleSubmit(onSubmit)}
 		>
 			{errors?.root?.message && (
@@ -205,23 +204,6 @@ function SignInPageForm() {
 					'Sign in'
 				)}
 			</Button>
-
-			<div className="flex items-center">
-				<div className="mt-0.5 flex flex-auto items-center justify-center">
-					<Typography
-						className="text-sm"
-						color="text.secondary"
-					>
-						Don't have an account?
-					</Typography>
-					<Link
-						className="ml-1 text-sm font-medium"
-						to="/sign-up"
-					>
-						Sign up
-					</Link>
-				</div>
-			</div>
 		</form>
 	);
 }

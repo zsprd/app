@@ -4,8 +4,6 @@ import { Controller, useForm } from 'react-hook-form';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Link from '@fuse/core/Link';
 import _ from 'lodash';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -123,13 +121,6 @@ function ForgotPasswordPageForm() {
 					'Send reset link'
 				)}
 			</Button>
-
-			<Typography
-				className="text-md font-medium"
-				color="text.secondary"
-			>
-				Return to <Link to="/sign-in">sign in</Link>
-			</Typography>
 		</form>
 	);
 }

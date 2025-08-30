@@ -1,4 +1,3 @@
-// src/@auth/authJs.ts (Fixed TypeScript Types)
 import NextAuth from 'next-auth';
 import { User } from '@auth/user';
 import { createStorage } from 'unstorage';
@@ -8,8 +7,8 @@ import { UnstorageAdapter } from '@auth/unstorage-adapter';
 import type { NextAuthConfig } from 'next-auth';
 import type { Provider } from 'next-auth/providers';
 import Credentials from 'next-auth/providers/credentials';
-import Facebook from 'next-auth/providers/facebook';
 import Google from 'next-auth/providers/google';
+import Apple from 'next-auth/providers/apple';
 import { authGetDbUserByEmail, authCreateDbUser, authValidateUserCredentials } from './authApi';
 
 const storage = createStorage({
@@ -125,9 +124,9 @@ export const providers: Provider[] = [
 		clientId: process.env.AUTH_GOOGLE_ID || '',
 		clientSecret: process.env.AUTH_GOOGLE_SECRET || ''
 	}),
-	Facebook({
-		clientId: process.env.AUTH_FACEBOOK_ID || '',
-		clientSecret: process.env.AUTH_FACEBOOK_SECRET || ''
+	Apple({
+		clientId: process.env.AUTH_APPLE_ID || '',
+		clientSecret: process.env.AUTH_APPLE_SECRET || ''
 	})
 ];
 
