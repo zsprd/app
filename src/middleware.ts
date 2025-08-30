@@ -2,7 +2,7 @@ import { auth } from '@auth/authJs';
 import { NextResponse } from 'next/server';
 
 // Define protected and public routes
-const protectedRoutes = ['/dashboard', '/portfolios', '/analytics', '/reports', '/settings', '/profile'];
+const protectedRoutes = ['/dashboards', '/dashboard', '/portfolios', '/analytics', '/reports', '/settings', '/profile'];
 
 const authRoutes = ['/sign-in', '/sign-up', '/sign-out', '/forgot-password', '/reset-password'];
 
@@ -34,7 +34,7 @@ export default auth((req) => {
 
 	// Default redirect for root path
 	if (nextUrl.pathname === '/' && isLoggedIn) {
-		return NextResponse.redirect(new URL('/dashboard', nextUrl));
+		return NextResponse.redirect(new URL('/example', nextUrl));
 	}
 
 	if (nextUrl.pathname === '/' && !isLoggedIn) {

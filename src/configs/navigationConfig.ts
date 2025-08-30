@@ -19,6 +19,44 @@ const navigationConfig: FuseNavItemType[] = [
 		type: 'item',
 		icon: 'lucide:star',
 		url: 'example'
+	},
+	{
+		id: 'dashboards',
+		title: 'Dashboards',
+		subtitle: 'Unique dashboard designs',
+		type: 'collapse',
+		icon: 'lucide:layout-dashboard',
+		translate: 'DASHBOARDS',
+		children: [
+			{
+				id: 'dashboards.project',
+				title: 'Project',
+				type: 'item',
+				icon: 'lucide:clipboard-check',
+				url: '/dashboards/project'
+			},
+			{
+				id: 'dashboards.analytics',
+				title: 'Analytics',
+				type: 'item',
+				icon: 'lucide:chart-pie',
+				url: '/dashboards/analytics'
+			},
+			{
+				id: 'dashboards.finance',
+				title: 'Finance',
+				type: 'item',
+				icon: 'lucide:banknote',
+				url: '/dashboards/finance'
+			},
+			{
+				id: 'dashboards.crypto',
+				title: 'Crypto',
+				type: 'item',
+				icon: 'lucide:dollar-sign',
+				url: '/dashboards/crypto'
+			}
+		]
 	}
 ];
 
