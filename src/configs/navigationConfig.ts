@@ -1,5 +1,5 @@
-import i18n from '@i18n';
 import { FuseNavItemType } from '@fuse/core/FuseNavigation/types/FuseNavItemType';
+import i18n from '@i18n';
 import ar from './navigation-i18n/ar';
 import en from './navigation-i18n/en';
 import tr from './navigation-i18n/tr';
@@ -13,48 +13,154 @@ i18n.addResourceBundle('ar', 'navigation', ar);
  */
 const navigationConfig: FuseNavItemType[] = [
 	{
-		id: 'example-component',
-		title: 'Example',
-		translate: 'EXAMPLE',
-		type: 'item',
-		icon: 'lucide:star',
-		url: 'example'
-	},
-	{
-		id: 'dashboards',
-		title: 'Dashboards',
-		subtitle: 'Unique dashboard designs',
-		type: 'collapse',
-		icon: 'lucide:layout-dashboard',
-		translate: 'DASHBOARDS',
+		id: 'dashboard',
+		title: 'Dashboard',
+		subtitle: 'Command center for quick insights',
+		type: 'group',
+		icon: 'lucide:house',
+		translate: 'DASHBOARD',
 		children: [
 			{
-				id: 'dashboards.project',
+				id: 'dashboard.project',
 				title: 'Project',
 				type: 'item',
 				icon: 'lucide:clipboard-check',
-				url: '/dashboards/project'
+				url: '/dashboard/project'
 			},
 			{
-				id: 'dashboards.analytics',
+				id: 'dashboard.analytics',
 				title: 'Analytics',
 				type: 'item',
 				icon: 'lucide:chart-pie',
-				url: '/dashboards/analytics'
+				url: '/dashboard/analytics'
 			},
 			{
-				id: 'dashboards.finance',
+				id: 'dashboard.finance',
 				title: 'Finance',
 				type: 'item',
 				icon: 'lucide:banknote',
-				url: '/dashboards/finance'
+				url: '/dashboard/finance'
 			},
 			{
-				id: 'dashboards.crypto',
-				title: 'Crypto',
+				id: 'dashboard.overview',
+				title: 'Overview',
 				type: 'item',
-				icon: 'lucide:dollar-sign',
-				url: '/dashboards/crypto'
+				icon: 'lucide:layout-dashboard',
+				url: '/dashboard/overview'
+			},
+			{
+				id: 'dashboard.activity',
+				title: 'Activity',
+				type: 'item',
+				icon: 'lucide:activity',
+				url: '/dashboard/activity'
+			}
+		]
+	},
+	{
+		id: 'portfolios',
+		title: 'Portfolios',
+		subtitle: 'Manage and track your investments',
+		type: 'group',
+		icon: 'lucide:briefcase',
+		translate: 'PORTFOLIOS',
+		children: [
+			{
+				id: 'portfolios.accounts',
+				title: 'Accounts',
+				type: 'item',
+				icon: 'lucide:wallet',
+				url: '/portfolios/accounts'
+			},
+			{
+				id: 'portfolios.holdings',
+				title: 'Holdings',
+				type: 'item',
+				icon: 'lucide:package',
+				url: '/portfolios/holdings'
+			},
+			{
+				id: 'portfolios.transactions',
+				title: 'Transactions',
+				type: 'item',
+				icon: 'lucide:arrow-left-right',
+				url: '/portfolios/transactions'
+			},
+			{
+				id: 'portfolios.connections',
+				title: 'Connections',
+				type: 'item',
+				icon: 'lucide:link',
+				url: '/portfolios/connections'
+			}
+		]
+	},
+	{
+		id: 'analytics',
+		title: 'Analytics',
+		subtitle: 'In-depth insights and data analysis',
+		type: 'group',
+		icon: 'lucide:trending-up',
+		translate: 'ANALYTICS',
+		children: [
+			{
+				id: 'analytics.exposures',
+				title: 'Exposures',
+				type: 'item',
+				icon: 'lucide:chart-pie',
+				url: '/analytics/exposures'
+			},
+			{
+				id: 'analytics.performance',
+				title: 'Performance',
+				type: 'item',
+				icon: 'lucide:chart-area',
+				url: '/analytics/performance'
+			},
+			{
+				id: 'analytics.risk',
+				title: 'Risk',
+				type: 'item',
+				icon: 'lucide:shield',
+				url: '/analytics/risk'
+			},
+			{
+				id: 'analytics.optimization',
+				title: 'Optimization',
+				type: 'item',
+				icon: 'lucide:sliders-horizontal',
+				url: '/analytics/optimization'
+			},
+			{
+				id: 'analytics.insights',
+				title: 'Insights',
+				type: 'item',
+				icon: 'lucide:brain',
+				url: '/analytics/insights'
+			}
+		]
+	},
+	{
+		id: 'monitoring',
+		title: 'Monitoring',
+		subtitle: 'Keep track of alerts and reports',
+		type: 'group',
+		icon: 'lucide:eye',
+		translate: 'MONITORING',
+		children: [
+			{
+				id: 'monitoring.alerts',
+				title: 'Alerts',
+				type: 'item',
+				icon: 'lucide:bell',
+				url: '/monitoring/alerts'
+			},
+			{
+				id: 'monitoring.reports',
+				title: 'Reports',
+				type: 'item',
+				icon: 'lucide:file-text',
+				url: '/monitoring/reports'
 			}
 		]
 	}

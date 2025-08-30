@@ -1,17 +1,17 @@
+import { useNavbarContext } from '@/components/theme-layouts/components/navbar/contexts/NavbarContext/useNavbarContext';
+import useNavigationItems from '@/components/theme-layouts/components/navigation/hooks/useNavigationItems';
+import FuseNavigation from '@fuse/core/FuseNavigation';
+import isUrlInChildren from '@fuse/core/FuseNavigation/isUrlInChildren';
+import { FuseNavItemType } from '@fuse/core/FuseNavigation/types/FuseNavItemType';
 import FuseScrollbars from '@fuse/core/FuseScrollbars';
-import { styled } from '@mui/material/styles';
+import usePathname from '@fuse/hooks/usePathname';
+import useThemeMediaQuery from '@fuse/hooks/useThemeMediaQuery';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
+import { styled } from '@mui/material/styles';
+import { Theme } from '@mui/system';
 import clsx from 'clsx';
 import { memo, useEffect, useState } from 'react';
-import FuseNavigation from '@fuse/core/FuseNavigation';
-import useThemeMediaQuery from '@fuse/hooks/useThemeMediaQuery';
-import isUrlInChildren from '@fuse/core/FuseNavigation/isUrlInChildren';
-import { Theme } from '@mui/system';
-import { FuseNavItemType } from '@fuse/core/FuseNavigation/types/FuseNavItemType';
 import UserMenu from 'src/components/theme-layouts/components/UserMenu';
-import usePathname from '@fuse/hooks/usePathname';
-import useNavigationItems from '@/components/theme-layouts/components/navigation/hooks/useNavigationItems';
-import { useNavbarContext } from '@/components/theme-layouts/components/navbar/contexts/NavbarContext/useNavbarContext';
 
 const Root = styled('div')(({ theme }) => ({
 	backgroundColor: theme.vars.palette.background.default,
@@ -54,7 +54,7 @@ function needsToBeOpened(pathname: string, item: FuseNavItemType) {
 type NavbarStyle2ContentProps = { className?: string };
 
 /**
- * The navbar style 3 content.
+ * The navbar style 2 content.
  */
 function NavbarStyle2Content(props: NavbarStyle2ContentProps) {
 	const { className = '' } = props;

@@ -1,7 +1,7 @@
 const locale = {
 	APPLICATIONS: 'تطبيقات',
 	EXAMPLE: 'مثال',
-	DASHBOARDS: 'لوحات',
+	DASHBOARD: 'لوحات',
 	CALENDAR: 'التقويم',
 	ECOMMERCE: 'التجارة الإلكترونية',
 	ACADEMY: 'الأكاديمية',

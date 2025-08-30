@@ -1,5 +1,5 @@
+import { AnalyticsDashboardWidgetType } from '@/app/(control-panel)/dashboard/analytics/api/types';
 import mockApi from 'src/@mock-utils/mockApi';
-import { AnalyticsDashboardWidgetType } from '@/app/(control-panel)/dashboards/analytics/api/types';
 
 /**
  * GET api/mock/analytics-dashboard/widgets

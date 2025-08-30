@@ -1,33 +1,64 @@
+# ZSPRD Portfolio Analytics
 
-# Fuse React Versions
-## Available Versions
-- **Fuse React ViteJs** - Single Page Application (SPA)
-  - ViteJs offers a fast development experience with its instant server start and hot module replacement, making it ideal for SPAs where quick feedback and performance are crucial.
-- **Fuse React NextJs** - Server Side Rendering (SSR)
-  - NextJs excels in SSR by providing automatic static optimization and server-side rendering capabilities, which enhance SEO and initial load performance, making it perfect for dynamic web applications.
+ZSPRD Portfolio Analytics is a SaaS platform delivering institutional-grade portfolio analytics for high-net-worth individuals ($1M+ portfolios). Our mission is to democratize professional investment analysis tools, offering advanced features at a fraction of traditional enterprise costs.
 
-## GitHub Branches
+## Features
 
-| | **ViteJs** | **NextJs** |
-|---------|------|----------|
-| **Demo** | [`vitejs-demo`](https://github.com/withinpixels/fuse-react/tree/vitejs-demo) [🌐](https://fuse-react-vitejs-demo.fusetheme.com) | [`nextjs-demo`](https://github.com/withinpixels/fuse-react/tree/nextjs-demo) [🌐](https://fuse-react-nextjs-demo.fusetheme.com) |
-| **Skeleton** | [`vitejs-skeleton`](https://github.com/withinpixels/fuse-react/tree/vitejs-skeleton) [🌐](https://fuse-react-vitejs-skeleton.fusetheme.com) | [`nextjs-skeleton`](https://github.com/withinpixels/fuse-react/tree/nextjs-skeleton) [🌐](https://fuse-react-nextjs-skeleton.fusetheme.com) |
-| **Development Demo** | [`vitejs-demo-dev`](https://github.com/withinpixels/fuse-react/tree/vitejs-demo-dev) [🌐](https://fuse-react-vitejs-demo-dev.fusetheme.com) | [`nextjs-demo-dev`](https://github.com/withinpixels/fuse-react/tree/nextjs-demo-dev) [🌐](https://fuse-react-nextjs-demo-dev.fusetheme.com) |
-| **Development Skeleton** | [`vitejs-skeleton-dev`](https://github.com/withinpixels/fuse-react/tree/vitejs-skeleton-dev) [🌐](https://fuse-react-vitejs-skeleton-dev.fusetheme.com) | [`nextjs-skeleton-dev`](https://github.com/withinpixels/fuse-react/tree/nextjs-skeleton-dev) [🌐](https://fuse-react-nextjs-skeleton-dev.fusetheme.com) |
+- **Portfolio Tracking**: Real-time tracking of US/international stocks, ETFs, Bitcoin/Ethereum, and cash (USD/EUR/GBP)
+- **Performance Analytics**: Total/annualized returns, volatility, Sharpe ratio, drawdown, and more
+- **Risk Analysis**: Value at Risk, stress tests, and risk metrics
+- **Asset Allocation**: Visual breakdowns by asset type, sector, and geography
+- **Professional PDF Reports**: Downloadable, presentation-ready analytics
 
+## Technology Stack
 
-## CLI Reference Links
+- **Frontend**: Next.js 15+, React 19+, Fuse React Admin, TailwindCSS, Material-UI 7+, TanStack Query, ApexCharts
+- **Backend**: FastAPI (Python 3.11+), PostgreSQL, Redis, JWT Auth (NextAuth.js)
+- **Microservices**: Auth, Portfolio, Analytics, MarketData, Reports
+- **Deployment**: Vercel
 
-- [ViteJs CLI Documentation](https://vitejs.dev/guide/cli.html)
+## Folder Structure
 
-- [NextJs CLI Documentation](https://nextjs.org/docs/api-reference/cli)
+```
+src/
+├── api/                  # API layer (hooks, services, types, models)
+├── components/           # UI components (views, ui, forms)
+├── (routes)/             # Next.js App Router pages
+├── contexts/             # React contexts
+├── hooks/                # Custom React hooks
+├── lib/                  # Utilities & constants
+├── types/                # Frontend-specific types
+```
+
+## Coding Patterns
+
+- **TanStack Query** for server state
+- **NextAuth.js** for authentication
+- **ApexCharts** for financial data visualization
+- **Material-UI** and **Fuse** for UI/UX
+- **Responsive Design**: Mobile-first, professional desktop experience
+- **Security**: JWT handling, authenticated API calls
+- **Accessibility**: WCAG compliance
+
+## Getting Started
+
+1. **Install dependencies**
+    ```powershell
+    npm install
+    ```
+2. **Run development server**
+    ```powershell
+    npm run dev
+    ```
+3. **Environment Variables**
+    - Configure `.env.local` with service URLs and secrets
 
 ## License
 
-- [License Information](https://themeforest.net/licenses/terms/regular)
+This project is licensed for ZSPRD internal use. See LICENSE for details.
 
-## More
+## More Information
 
-- [Fuse Theme Official Website](https://fusetheme.com/)
-
-
+- [Fuse Theme](https://fusetheme.com/)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
