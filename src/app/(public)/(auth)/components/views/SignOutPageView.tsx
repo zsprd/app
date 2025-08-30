@@ -9,31 +9,33 @@ import SignOutPageMessageSection from '../ui/SignOutPageMessageSection';
 import { signOut as nextAuthSignOut } from 'next-auth/react'; // Import directly
 
 function SignOutPageView() {
-    const [countdown, setCountdown] = useState<number | null>(null);
-    const router = useRouter();
-    const hasSignedOut = useRef(false);
+	const [countdown, setCountdown] = useState<number | null>(null);
+	const router = useRouter();
+	const hasSignedOut = useRef(false);
 
-    useEffect(() => {
-        // Only sign out once
-        if (!hasSignedOut.current) {
-            hasSignedOut.current = true;
-            nextAuthSignOut({ redirect: false }).then(() => {
-                setCountdown(5); // Start countdown after sign out
-            });
-        }
-    }, []);
+	useEffect(() => {
+		// Only sign out once
+		if (!hasSignedOut.current) {
+			hasSignedOut.current = true;
+			nextAuthSignOut({ redirect: false }).then(() => {
+				setCountdown(5); // Start countdown after sign out
+			});
+		}
+	}, []);
 
-    useEffect(() => {
-        if (countdown === null) return;
-        if (countdown === 0) {
-            router.push('/sign-in');
-            return;
-        }
-        const interval = setInterval(() => {
-            setCountdown((prev) => (prev !== null ? Math.max(prev - 1, 0) : null));
-        }, 1000);
-        return () => clearInterval(interval);
-    }, [countdown, router]);
+	useEffect(() => {
+		if (countdown === null) return;
+
+		if (countdown === 0) {
+			router.push('/sign-in');
+			return;
+		}
+
+		const interval = setInterval(() => {
+			setCountdown((prev) => (prev !== null ? Math.max(prev - 1, 0) : null));
+		}, 1000);
+		return () => clearInterval(interval);
+	}, [countdown, router]);
 
 	return (
 		<div className="flex min-w-0 flex-auto flex-col items-center sm:justify-center md:p-8">
@@ -50,7 +52,7 @@ function SignOutPageView() {
 							<Typography className="mt-8 text-center text-4xl leading-[1.25] font-extrabold tracking-tight">
 								You have signed out!
 							</Typography>
-							
+
 							<Typography className="mt-0.5 flex justify-center font-medium">
 								{countdown > 0 ? `Redirecting in ${countdown} seconds` : 'Redirecting...'}
 							</Typography>

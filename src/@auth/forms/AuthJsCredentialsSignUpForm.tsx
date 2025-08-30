@@ -27,7 +27,10 @@ const schema = z
 			.string()
 			.nonempty('Please enter your password.')
 			.min(8, 'Password is too short - should be 8 chars minimum.')
-			.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one uppercase letter, one lowercase letter, and one number'),
+			.regex(
+				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+				'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+			),
 		passwordConfirm: z.string().nonempty('Password confirmation is required'),
 		acceptTermsConditions: z.boolean().refine((val) => val === true, 'The terms and conditions must be accepted.')
 	})
@@ -47,7 +50,7 @@ const defaultValues = {
 };
 
 function SignUpPageForm() {
-	const { control, formState, handleSubmit, setError, reset } = useForm<FormType>({
+	const { control, formState, handleSubmit, setError } = useForm<FormType>({
 		mode: 'onChange',
 		defaultValues,
 		resolver: zodResolver(schema)
@@ -62,7 +65,7 @@ function SignUpPageForm() {
 
 		try {
 			const { displayName, email, password } = formData;
-			
+
 			const result = await signIn('credentials', {
 				displayName,
 				email,
@@ -73,12 +76,12 @@ function SignUpPageForm() {
 
 			if (result?.error) {
 				let errorMessage = signinErrors[result.error] || 'An error occurred during signup';
-				
+
 				// Handle specific signup errors
 				if (result.error === 'CredentialsSignin') {
 					errorMessage = 'Account with this email already exists';
 				}
-				
+
 				setError('root', { type: 'manual', message: errorMessage });
 			} else if (result?.ok) {
 				// Successful signup and automatic login
@@ -221,7 +224,7 @@ function SignUpPageForm() {
 			<Button
 				variant="contained"
 				color="secondary"
-				className="w-full mt-4"
+				className="mt-4 w-full"
 				aria-label="Create Account"
 				disabled={_.isEmpty(dirtyFields) || !isValid || isLoading}
 				type="submit"
@@ -229,7 +232,10 @@ function SignUpPageForm() {
 			>
 				{isLoading ? (
 					<>
-						<CircularProgress size={20} className="mr-2" />
+						<CircularProgress
+							size={20}
+							className="mr-2"
+						/>
 						Creating Account...
 					</>
 				) : (

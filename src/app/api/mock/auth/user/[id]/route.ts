@@ -6,24 +6,21 @@ import { v4 as uuidv4 } from 'uuid';
 /**
  * GET /api/mock/users - Get all users (admin only)
  */
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
 	try {
 		const api = mockApi('users');
 		const users = await api.findAll();
-		
+
 		// Remove passwords from response for security
 		const safeUsers = users.map((user: User) => {
-			const { password, ...safeUser } = user;
+			const { password: _password, ...safeUser } = user;
 			return safeUser;
 		});
 
 		return NextResponse.json(safeUsers, { status: 200 });
 	} catch (error) {
 		console.error('Error fetching users:', error);
-		return NextResponse.json(
-			{ message: 'Failed to fetch users' }, 
-			{ status: 500 }
-		);
+		return NextResponse.json({ message: 'Failed to fetch users' }, { status: 500 });
 	}
 }
 
@@ -32,25 +29,19 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
 	try {
-		const userData = await req.json() as Partial<User>;
-		
+		const userData = (await req.json()) as Partial<User>;
+
 		// Validate required fields
 		if (!userData.email) {
-			return NextResponse.json(
-				{ message: 'Email is required' }, 
-				{ status: 400 }
-			);
+			return NextResponse.json({ message: 'Email is required' }, { status: 400 });
 		}
 
 		// Check if user already exists
 		const api = mockApi('users');
 		const existingUser = await api.find({ email: userData.email });
-		
+
 		if (existingUser) {
-			return NextResponse.json(
-				{ message: 'User already exists' }, 
-				{ status: 409 }
-			);
+			return NextResponse.json({ message: 'User already exists' }, { status: 409 });
 		}
 
 		// Create new user with generated ID
@@ -69,14 +60,11 @@ export async function POST(req: NextRequest) {
 		const createdUser = await api.create(newUser);
 
 		// Remove password from response
-		const { password, ...safeUser } = createdUser as User;
+		const { password: _password, ...safeUser } = createdUser as User;
 
 		return NextResponse.json(safeUser, { status: 201 });
 	} catch (error) {
 		console.error('Error creating user:', error);
-		return NextResponse.json(
-			{ message: 'Failed to create user' }, 
-			{ status: 500 }
-		);
+		return NextResponse.json({ message: 'Failed to create user' }, { status: 500 });
 	}
 }

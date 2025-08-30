@@ -7,7 +7,6 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Link from '@fuse/core/Link';
 import _ from 'lodash';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormLabel from '@mui/material/FormLabel';
@@ -64,7 +63,7 @@ function SignInPageForm() {
 
 	async function onSubmit(formData: FormType) {
 		setIsLoading(true);
-		
+
 		try {
 			const { email, password } = formData;
 
@@ -77,12 +76,12 @@ function SignInPageForm() {
 
 			if (result?.error) {
 				let errorMessage = signinErrors[result.error] || 'Sign in failed';
-				
+
 				// Handle specific signin errors
 				if (result.error === 'CredentialsSignin') {
 					errorMessage = 'Invalid email or password. Please check your credentials and try again.';
 				}
-				
+
 				setError('root', { type: 'manual', message: errorMessage });
 			} else if (result?.ok) {
 				// Successful login
@@ -157,7 +156,7 @@ function SignInPageForm() {
 				)}
 			/>
 
-			<div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0 sm:items-center sm:justify-between">
+			<div className="flex flex-col items-center space-y-4 sm:flex-row sm:justify-between sm:space-y-0 sm:space-x-4">
 				<Controller
 					name="remember"
 					control={control}
@@ -196,7 +195,10 @@ function SignInPageForm() {
 			>
 				{isLoading ? (
 					<>
-						<CircularProgress size={20} className="mr-2" />
+						<CircularProgress
+							size={20}
+							className="mr-2"
+						/>
 						Signing in...
 					</>
 				) : (
@@ -206,10 +208,16 @@ function SignInPageForm() {
 
 			<div className="flex items-center">
 				<div className="mt-0.5 flex flex-auto items-center justify-center">
-					<Typography className="text-sm" color="text.secondary">
+					<Typography
+						className="text-sm"
+						color="text.secondary"
+					>
 						Don't have an account?
 					</Typography>
-					<Link className="ml-1 text-sm font-medium" to="/sign-up">
+					<Link
+						className="ml-1 text-sm font-medium"
+						to="/sign-up"
+					>
 						Sign up
 					</Link>
 				</div>

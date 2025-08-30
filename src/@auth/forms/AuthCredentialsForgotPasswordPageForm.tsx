@@ -44,17 +44,17 @@ function ForgotPasswordPageForm() {
 
 		try {
 			const result = await authRequestPasswordReset(formData.email);
-			
+
 			if (result.success) {
 				setMessage({ type: 'success', text: result.message });
 				reset(defaultValues);
 			} else {
 				setMessage({ type: 'error', text: result.message });
 			}
-		} catch (error) {
-			setMessage({ 
-				type: 'error', 
-				text: 'An error occurred. Please try again.' 
+		} catch (_error) {
+			setMessage({
+				type: 'error',
+				text: 'An error occurred. Please try again.'
 			});
 		} finally {
 			setIsLoading(false);
@@ -73,12 +73,9 @@ function ForgotPasswordPageForm() {
 					className="mb-4"
 					severity={message.type}
 					sx={(theme) => ({
-						backgroundColor: message.type === 'error' 
-							? theme.palette.error.light 
-							: theme.palette.success.light,
-						color: message.type === 'error' 
-							? theme.palette.error.dark 
-							: theme.palette.success.dark
+						backgroundColor:
+							message.type === 'error' ? theme.palette.error.light : theme.palette.success.light,
+						color: message.type === 'error' ? theme.palette.error.dark : theme.palette.success.dark
 					})}
 				>
 					{message.text}
@@ -116,7 +113,10 @@ function ForgotPasswordPageForm() {
 			>
 				{isLoading ? (
 					<>
-						<CircularProgress size={20} className="mr-2" />
+						<CircularProgress
+							size={20}
+							className="mr-2"
+						/>
 						Sending...
 					</>
 				) : (

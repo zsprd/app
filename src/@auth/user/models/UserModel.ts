@@ -4,15 +4,15 @@ import { User } from '@auth/user';
 /**
  * Native JavaScript implementation of lodash defaults
  */
-function defaults(obj: any, defaultValues: any): any {
+function defaults(obj: Record<string, unknown>, defaultValues: Record<string, unknown>): Record<string, unknown> {
 	const result = { ...obj };
-	
+
 	for (const key in defaultValues) {
 		if (result[key] === undefined || result[key] === null) {
 			result[key] = defaultValues[key];
 		}
 	}
-	
+
 	return result;
 }
 

@@ -17,7 +17,9 @@ function SignUpPageView() {
 								alt="logo"
 							/>
 
-							<Typography className="mt-8 text-4xl leading-[1.25] font-extrabold tracking-tight">Sign up</Typography>
+							<Typography className="mt-8 text-4xl leading-[1.25] font-extrabold tracking-tight">
+								Sign up
+							</Typography>
 							<div className="mt-0.5 flex items-baseline font-medium">
 								<Typography>Already have an account?</Typography>
 								<Link

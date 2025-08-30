@@ -20,8 +20,8 @@ function ConfirmationRequiredPageView() {
 								Confirmation required
 							</Typography>
 							<Typography className="mt-4">
-								A confirmation mail with instructions has been sent to your email address. Follow those instructions to
-								confirm your email address and activate your account.
+								A confirmation mail with instructions has been sent to your email address. Follow those
+								instructions to confirm your email address and activate your account.
 							</Typography>
 
 							<Typography

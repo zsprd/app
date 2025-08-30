@@ -10,11 +10,7 @@ import type { Provider } from 'next-auth/providers';
 import Credentials from 'next-auth/providers/credentials';
 import Facebook from 'next-auth/providers/facebook';
 import Google from 'next-auth/providers/google';
-import { 
-	authGetDbUserByEmail, 
-	authCreateDbUser, 
-	authValidateUserCredentials 
-} from './authApi';
+import { authGetDbUserByEmail, authCreateDbUser, authValidateUserCredentials } from './authApi';
 
 const storage = createStorage({
 	driver: process.env.VERCEL
@@ -55,7 +51,7 @@ export const providers: Provider[] = [
 				if (formType === 'signin') {
 					// Validate user credentials using simple comparison
 					const isValid = await authValidateUserCredentials(email, password);
-					
+
 					if (!isValid) {
 						console.log('Invalid credentials for signin');
 						return null;
@@ -81,11 +77,12 @@ export const providers: Provider[] = [
 					// Check if user already exists
 					try {
 						const existingUserResponse = await authGetDbUserByEmail(email);
+
 						if (existingUserResponse.ok) {
 							console.log('User already exists');
 							return null; // User already exists
 						}
-					} catch (error) {
+					} catch (_error) {
 						// User doesn't exist, which is good for signup
 					}
 
@@ -105,7 +102,7 @@ export const providers: Provider[] = [
 					});
 
 					if (newUserResponse.ok) {
-						// ✅ Return properly typed User object for NextAuth
+						// Return properly typed User object for NextAuth
 						return {
 							id: email, // NextAuth expects string id
 							email: email,
@@ -149,7 +146,7 @@ const config = {
 		authorized() {
 			return true; // We'll handle authorization in middleware
 		},
-		jwt({ token, trigger, account, user, session }) {
+		jwt({ token, trigger, account, user }) {
 			if (trigger === 'update') {
 				token.name = user?.name;
 			}

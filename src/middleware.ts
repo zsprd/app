@@ -1,38 +1,20 @@
 import { auth } from '@auth/authJs';
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 
 // Define protected and public routes
-const protectedRoutes = [
-	'/dashboard',
-	'/portfolios',
-	'/analytics', 
-	'/reports',
-	'/settings',
-	'/profile'
-];
+const protectedRoutes = ['/dashboard', '/portfolios', '/analytics', '/reports', '/settings', '/profile'];
 
-const authRoutes = [
-	'/sign-in',
-	'/sign-up', 
-	'/sign-out',
-	'/forgot-password',
-	'/reset-password'
-];
+const authRoutes = ['/sign-in', '/sign-up', '/sign-out', '/forgot-password', '/reset-password'];
 
 export default auth((req) => {
 	const { nextUrl } = req;
 	const isLoggedIn = !!req.auth;
 
 	// Check if current route is protected
-	const isProtectedRoute = protectedRoutes.some(route => 
-		nextUrl.pathname.startsWith(route)
-	);
-	
+	const isProtectedRoute = protectedRoutes.some((route) => nextUrl.pathname.startsWith(route));
+
 	// Check if current route is an auth route
-	const isAuthRoute = authRoutes.some(route => 
-		nextUrl.pathname.startsWith(route)
-	);
+	const isAuthRoute = authRoutes.some((route) => nextUrl.pathname.startsWith(route));
 
 	// Allow access to sign-out page regardless of auth status
 	if (nextUrl.pathname === '/sign-out') {
@@ -47,9 +29,7 @@ export default auth((req) => {
 	// Redirect non-logged-in users to sign in from protected routes
 	if (!isLoggedIn && isProtectedRoute) {
 		const callbackUrl = nextUrl.pathname + nextUrl.search;
-		return NextResponse.redirect(
-			new URL(`/sign-in?callbackUrl=${encodeURIComponent(callbackUrl)}`, nextUrl)
-		);
+		return NextResponse.redirect(new URL(`/sign-in?callbackUrl=${encodeURIComponent(callbackUrl)}`, nextUrl));
 	}
 
 	// Default redirect for root path

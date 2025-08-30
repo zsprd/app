@@ -42,18 +42,18 @@ export async function authValidateUserCredentials(email: string, password: strin
 	try {
 		// Get user by email
 		const response = await authGetDbUserByEmail(email);
-		
+
 		if (!response.ok) {
 			return false;
 		}
 
-		const user = await response.json() as User;
-		
+		const user = (await response.json()) as User;
+
 		// Simple plain text comparison for mock data
 		if (user.password) {
 			return user.password === password;
 		}
-		
+
 		return false;
 	} catch (error) {
 		console.error('Error validating credentials:', error);
@@ -67,14 +67,14 @@ export async function authValidateUserCredentials(email: string, password: strin
 export async function authRequestPasswordReset(email: string): Promise<{ success: boolean; message: string }> {
 	try {
 		const response = await authGetDbUserByEmail(email);
-		
+
 		if (!response.ok) {
 			return { success: false, message: 'User not found' };
 		}
 
 		// Mock implementation - just simulate success
 		console.log(`Password reset requested for: ${email}`);
-		
+
 		return { success: true, message: 'Password reset link sent to your email' };
 	} catch (error) {
 		console.error('Error requesting password reset:', error);
@@ -86,15 +86,14 @@ export async function authRequestPasswordReset(email: string): Promise<{ success
  * Reset password
  */
 export async function authResetPassword(
-	email: string, 
-	token: string, 
-	newPassword: string
+	email: string,
+	token: string,
+	_newPassword: string
 ): Promise<{ success: boolean; message: string }> {
-
 	console.log('Password reset for:', email, 'with token:', token);
-	
-	return { 
-		success: true, 
-		message: 'Password has been successfully reset.' 
+
+	return {
+		success: true,
+		message: 'Password has been successfully reset.'
 	};
 }

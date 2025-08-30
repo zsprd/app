@@ -48,7 +48,6 @@ function ResetPasswordPageForm() {
 	const { isValid, dirtyFields, errors } = formState;
 	const [isLoading, setIsLoading] = useState(false);
 	const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-	
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const email = searchParams.get('email');
@@ -57,18 +56,18 @@ function ResetPasswordPageForm() {
 	useEffect(() => {
 		// Validate that email and token are present
 		if (!email || !token) {
-			setMessage({ 
-				type: 'error', 
-				text: 'Invalid or missing reset link. Please request a new password reset.' 
+			setMessage({
+				type: 'error',
+				text: 'Invalid or missing reset link. Please request a new password reset.'
 			});
 		}
 	}, [email, token]);
 
 	async function onSubmit(formData: FormType) {
 		if (!email || !token) {
-			setMessage({ 
-				type: 'error', 
-				text: 'Invalid reset link. Please request a new password reset.' 
+			setMessage({
+				type: 'error',
+				text: 'Invalid reset link. Please request a new password reset.'
 			});
 			return;
 		}
@@ -78,11 +77,11 @@ function ResetPasswordPageForm() {
 
 		try {
 			const result = await authResetPassword(email, token, formData.password);
-			
+
 			if (result.success) {
 				setMessage({ type: 'success', text: result.message });
 				reset(defaultValues);
-				
+
 				// Redirect to sign in after successful reset
 				setTimeout(() => {
 					router.push('/sign-in');
@@ -90,10 +89,10 @@ function ResetPasswordPageForm() {
 			} else {
 				setMessage({ type: 'error', text: result.message });
 			}
-		} catch (error) {
-			setMessage({ 
-				type: 'error', 
-				text: 'An error occurred. Please try again.' 
+		} catch (_error) {
+			setMessage({
+				type: 'error',
+				text: 'An error occurred. Please try again.'
 			});
 		} finally {
 			setIsLoading(false);
@@ -112,17 +111,18 @@ function ResetPasswordPageForm() {
 					className="mb-4"
 					severity={message.type}
 					sx={(theme) => ({
-						backgroundColor: message.type === 'error' 
-							? theme.palette.error.light 
-							: theme.palette.success.light,
-						color: message.type === 'error' 
-							? theme.palette.error.dark 
-							: theme.palette.success.dark
+						backgroundColor:
+							message.type === 'error' ? theme.palette.error.light : theme.palette.success.light,
+						color: message.type === 'error' ? theme.palette.error.dark : theme.palette.success.dark
 					})}
 				>
 					{message.text}
 					{message.type === 'success' && (
-						<Typography variant="caption" display="block" className="mt-1">
+						<Typography
+							variant="caption"
+							display="block"
+							className="mt-1"
+						>
 							Redirecting to sign in page...
 						</Typography>
 					)}
@@ -186,7 +186,10 @@ function ResetPasswordPageForm() {
 			>
 				{isLoading ? (
 					<>
-						<CircularProgress size={20} className="mr-2" />
+						<CircularProgress
+							size={20}
+							className="mr-2"
+						/>
 						Resetting...
 					</>
 				) : (
