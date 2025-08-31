@@ -1,19 +1,18 @@
-import Button from '@mui/material/Button';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import MenuItem from '@mui/material/MenuItem';
-import Popover from '@mui/material/Popover';
-import Typography from '@mui/material/Typography';
-import { useState } from 'react';
-import Link from '@fuse/core/Link';
+import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { LanguageType } from '@i18n/I18nContext';
 import useI18n from '@i18n/useI18n';
+import IconButton from '@mui/material/IconButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { useState } from 'react';
 
 /**
  * The language switcher.
  */
 function LanguageSwitcher() {
-	const { language, languages, changeLanguage } = useI18n();
+	const { languages, changeLanguage, language, langDirection } = useI18n();
 
 	const [menu, setMenu] = useState<null | HTMLElement>(null);
 
@@ -33,66 +32,36 @@ function LanguageSwitcher() {
 
 	return (
 		<>
-			<Button
-				onClick={langMenuClick}
-				className="gap-1"
-			>
-				<img
-					className="min-w-5"
-					src={`/assets/images/flags/${language.flag}.svg`}
-					alt={language.title}
-				/>
-
-				<Typography
-					className="text-sm font-medium uppercase"
-					sx={(theme) => ({
-						color: theme.vars.palette.action.active
-					})}
-				>
-					{language.id}
-				</Typography>
-			</Button>
-			<Popover
+			<IconButton onClick={langMenuClick}>
+				<FuseSvgIcon>lucide:languages</FuseSvgIcon>
+			</IconButton>
+			<Menu
+				id="language-switcher-menu"
 				open={Boolean(menu)}
 				anchorEl={menu}
 				onClose={langMenuClose}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'center'
-				}}
-				transformOrigin={{
-					vertical: 'top',
-					horizontal: 'center'
-				}}
-				classes={{
-					paper: 'py-2'
-				}}
 			>
 				{languages.map((lng) => (
 					<MenuItem
 						key={lng.id}
 						onClick={() => handleLanguageChange(lng)}
+						selected={lng.id === language?.id}
 					>
-						<ListItemIcon className="min-w-9">
+						<ListItemIcon>
 							<img
-								className="min-w-5"
 								src={`/assets/images/flags/${lng.flag}.svg`}
 								alt={lng.title}
+								style={{
+									width: 24,
+									height: 16,
+									...(langDirection === 'rtl' ? { marginLeft: 8 } : { marginRight: 8 })
+								}}
 							/>
 						</ListItemIcon>
 						<ListItemText primary={lng.title} />
 					</MenuItem>
 				))}
-
-				<MenuItem
-					component={Link}
-					to="/documentation/configuration/multi-language"
-					onClick={langMenuClose}
-					role="button"
-				>
-					<ListItemText primary="Learn More" />
-				</MenuItem>
-			</Popover>
+			</Menu>
 		</>
 	);
 }

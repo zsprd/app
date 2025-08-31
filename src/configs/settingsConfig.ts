@@ -1,5 +1,5 @@
-import themesConfig from 'src/configs/themesConfig';
 import { FuseSettingsConfigType } from '@fuse/core/FuseSettings/FuseSettings';
+import themesConfig from 'src/configs/themesConfig';
 
 import i18n from '@i18n/i18n';
 
@@ -29,7 +29,7 @@ const settingsConfig: FuseSettingsConfigType = {
 	/**
 	 * The customScrollbars property defines whether or not to use custom scrollbars in the application.
 	 */
-	customScrollbars: true,
+	customScrollbars: false,
 
 	/**
 	 * The direction property defines the text direction for the application.

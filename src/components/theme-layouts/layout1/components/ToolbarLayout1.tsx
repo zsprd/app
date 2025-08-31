@@ -1,21 +1,19 @@
+import { Layout1ConfigDefaultsType } from '@/components/theme-layouts/layout1/Layout1Config';
+import useFuseLayoutSettings from '@fuse/core/FuseLayout/useFuseLayoutSettings';
+import { AppBar, Divider } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import clsx from 'clsx';
+import _ from 'lodash';
 import { memo } from 'react';
+import LightDarkModeToggle from 'src/components/LightDarkModeToggle';
 import NavbarToggleButton from 'src/components/theme-layouts/components/navbar/NavbarToggleButton';
 import themeOptions from 'src/configs/themeOptions';
-import _ from 'lodash';
-import LightDarkModeToggle from 'src/components/LightDarkModeToggle';
-import useFuseLayoutSettings from '@fuse/core/FuseLayout/useFuseLayoutSettings';
-import AdjustFontSize from '../../components/AdjustFontSize';
-import FullScreenToggle from '../../components/FullScreenToggle';
+import ToolbarTheme from 'src/contexts/ToolbarTheme';
+import useThemeMediaQuery from '../../../../@fuse/hooks/useThemeMediaQuery';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
-import NavigationShortcuts from '../../components/navigation/NavigationShortcuts';
 import NavigationSearch from '../../components/navigation/NavigationSearch';
 import QuickPanelToggleButton from '../../components/quickPanel/QuickPanelToggleButton';
-import { Layout1ConfigDefaultsType } from '@/components/theme-layouts/layout1/Layout1Config';
-import useThemeMediaQuery from '../../../../@fuse/hooks/useThemeMediaQuery';
-import { AppBar, Divider } from '@mui/material';
-import ToolbarTheme from 'src/contexts/ToolbarTheme';
+import UserMenu from '../../components/UserMenu';
 
 type ToolbarLayout1Props = {
 	className?: string;
@@ -55,19 +53,18 @@ function ToolbarLayout1(props: ToolbarLayout1Props) {
 							</>
 						)}
 
-						{!isMobile && <NavigationShortcuts />}
+						<NavigationSearch />
 					</div>
 
 					<div className="flex items-center overflow-x-auto px-2 py-2 md:px-4">
 						<LanguageSwitcher />
-						<AdjustFontSize />
-						<FullScreenToggle />
 						<LightDarkModeToggle
 							lightTheme={_.find(themeOptions, { id: 'Light' })}
 							darkTheme={_.find(themeOptions, { id: 'Dark' })}
 						/>
-						<NavigationSearch />
+
 						<QuickPanelToggleButton />
+						<UserMenu />
 					</div>
 
 					{config.navbar.display && config.navbar.position === 'right' && (

@@ -1,14 +1,14 @@
-import tseslint from 'typescript-eslint';
-import eslintPluginPrettier from 'eslint-plugin-prettier';
-import eslintPluginUnusedImports from 'eslint-plugin-unused-imports';
-import eslintPluginReactRefresh from 'eslint-plugin-react-refresh';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
+import eslintPluginPrettier from 'eslint-plugin-prettier';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import eslintPluginReact from 'eslint-plugin-react';
 import eslintPluginReactHooks from 'eslint-plugin-react-hooks';
-import { FlatCompat } from '@eslint/eslintrc';
+import eslintPluginReactRefresh from 'eslint-plugin-react-refresh';
+import eslintPluginUnusedImports from 'eslint-plugin-unused-imports';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import tseslint from 'typescript-eslint';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,7 +19,6 @@ const compat = new FlatCompat({
 export default tseslint.config({
     files: ['**/*.ts', '**/*.tsx'],
     ignores: [
-        '**/utils/node-scripts/fuse-react-message.js',
         '**/components/tiptap/**',
         '**/.next/**',
     ],

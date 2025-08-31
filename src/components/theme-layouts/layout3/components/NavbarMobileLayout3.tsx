@@ -1,12 +1,11 @@
 import FuseScrollbars from '@fuse/core/FuseScrollbars';
+import { Divider } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import clsx from 'clsx';
 import { memo } from 'react';
-import { Divider } from '@mui/material';
 import UserMenu from 'src/components/theme-layouts/components/UserMenu';
-import Navigation from '../../components/navigation/Navigation';
 import Logo from '../../components/Logo';
-import GoToDocBox from '../../components/GoToDocBox';
+import Navigation from '../../components/navigation/Navigation';
 
 const Root = styled('div')(({ theme }) => ({
 	backgroundColor: theme.vars.palette.background.default,
@@ -65,8 +64,6 @@ function NavbarMobileLayout3(props: NavbarMobileLayout3Props) {
 					/>
 				</div>
 			</StyledContent>
-
-			<GoToDocBox className="mx-3 my-4" />
 
 			<Divider />
 

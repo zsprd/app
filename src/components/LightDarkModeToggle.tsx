@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import IconButton from '@mui/material/IconButton';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { FuseThemeOption } from '@fuse/core/FuseThemeSelector/ThemePreview';
+import { FuseSettingsConfigType } from '@fuse/core/FuseSettings/FuseSettings';
 import { useMainTheme } from '@fuse/core/FuseSettings/hooks/fuseThemeHooks';
 import useFuseSettings from '@fuse/core/FuseSettings/hooks/useFuseSettings';
-import { FuseSettingsConfigType } from '@fuse/core/FuseSettings/FuseSettings';
+import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
+import { FuseThemeOption } from '@fuse/core/FuseThemeSelector/ThemePreview';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import React, { useState } from 'react';
 // import { useSnackbar } from 'notistack';
 
 type LightDarkModeToggleProps = {
@@ -44,11 +44,6 @@ function LightDarkModeToggle(props: LightDarkModeToggleProps) {
 	async function handleThemeSelect(_theme: FuseThemeOption) {
 		const _newSettings = setSettings({ theme: { ..._theme?.section } } as Partial<FuseSettingsConfigType>);
 
-		/**
-		 * Updating user settings disabled for demonstration purposes
-		 * The request is made to the mock API and will not persist the changes
-		 * You can enable it by removing the comment block below when using a real API
-		 * */
 		/* if (!isGuest) {
 			const updatedUserData = await updateUserSettings(_newSettings);
 
@@ -63,8 +58,6 @@ function LightDarkModeToggle(props: LightDarkModeToggleProps) {
 	return (
 		<>
 			<IconButton
-				aria-controls="light-dark-toggle-menu"
-				aria-haspopup="true"
 				onClick={handleClick}
 				className={className}
 			>
@@ -73,9 +66,8 @@ function LightDarkModeToggle(props: LightDarkModeToggleProps) {
 			</IconButton>
 			<Menu
 				id="light-dark-toggle-menu"
-				anchorEl={anchorEl}
-				keepMounted
 				open={Boolean(anchorEl)}
+				anchorEl={anchorEl}
 				onClose={handleClose}
 			>
 				<MenuItem

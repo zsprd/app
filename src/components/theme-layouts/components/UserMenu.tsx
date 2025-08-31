@@ -1,27 +1,23 @@
-import { useState } from 'react';
+import useUser from '@auth/useUser';
+import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
+import Link from '@fuse/core/Link';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
-import { darken } from '@mui/material/styles';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { styled } from '@mui/material/styles';
-import { PopoverProps } from '@mui/material/Popover';
-import Link from '@fuse/core/Link';
-import useUser from '@auth/useUser';
+import { darken, styled } from '@mui/material/styles';
 import clsx from 'clsx';
-import Tooltip from '@mui/material/Tooltip';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 type UserMenuProps = {
 	className?: string;
 	onlyAvatar?: boolean;
 	dense?: boolean;
 	arrowIcon?: string;
-	popoverProps?: Partial<PopoverProps>;
 };
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -35,8 +31,7 @@ function UserMenu({
 	className = '',
 	onlyAvatar = false,
 	dense = false,
-	arrowIcon = 'lucide:chevron-down',
-	popoverProps
+	arrowIcon = 'lucide:chevron-down'
 }: UserMenuProps) {
 	const { data: user, isGuest } = useUser();
 	const router = useRouter();
@@ -68,8 +63,8 @@ function UserMenu({
 						sx={{
 							background: (theme) =>
 								theme.palette.mode === 'light'
-									? darken(theme.palette.background.default, 0.04)
-									: theme.palette.text.secondary
+								? darken(theme.palette.background.default, 0.04)
+								: theme.palette.text.secondary
 						}}
 						className="text-32 font-bold"
 						src={user.photoURL}
@@ -82,8 +77,8 @@ function UserMenu({
 						sx={{
 							background: (theme) =>
 								theme.palette.mode === 'light'
-									? darken(theme.palette.background.default, 0.04)
-									: theme.palette.text.secondary
+								? darken(theme.palette.background.default, 0.04)
+								: theme.palette.text.secondary
 						}}
 						className="text-32 font-bold"
 					>
@@ -113,17 +108,6 @@ function UserMenu({
 							</Typography>
 						</div>
 						<div className="flex shrink-0 items-center gap-2">
-							<Tooltip
-								title={
-									<>
-										{user.role?.toString()}
-										{(!user.role || (Array.isArray(user.role) && user.role.length === 0)) &&
-											'Guest'}
-									</>
-								}
-							>
-								<FuseSvgIcon className="info-icon">lucide:info</FuseSvgIcon>
-							</Tooltip>
 							<FuseSvgIcon
 								className="arrow"
 								size={13}
@@ -134,79 +118,73 @@ function UserMenu({
 					</>
 				)}
 			</StyledButton>
-			<Popover
+			<Menu
+				id="user-menu"
 				open={Boolean(userMenu)}
 				anchorEl={userMenu}
 				onClose={userMenuClose}
-				anchorOrigin={{
-					vertical: 'top',
-					horizontal: 'right'
-				}}
-				transformOrigin={{
-					vertical: 'top',
-					horizontal: 'left'
-				}}
-				classes={{
-					paper: 'min-w-32'
-				}}
-				{...popoverProps}
 			>
-				{isGuest ? (
-					<>
-						<MenuItem
-							component={Link}
-							to="/sign-in"
-							role="button"
-						>
-							<ListItemIcon>
-								<FuseSvgIcon>lucide:lock</FuseSvgIcon>
-							</ListItemIcon>
-							<ListItemText primary="Sign In" />
-						</MenuItem>
-						<MenuItem
-							component={Link}
-							to="/sign-up"
-							role="button"
-						>
-							<ListItemIcon>
-								<FuseSvgIcon>lucide:user-plus</FuseSvgIcon>
-							</ListItemIcon>
-							<ListItemText primary="Sign up" />
-						</MenuItem>
-					</>
-				) : (
-					<>
-						<MenuItem
-							component={Link}
-							to="/apps/profile"
-							onClick={userMenuClose}
-							role="button"
-						>
-							<ListItemIcon>
-								<FuseSvgIcon>lucide:circle-user</FuseSvgIcon>
-							</ListItemIcon>
-							<ListItemText primary="My Profile" />
-						</MenuItem>
-						<MenuItem
-							component={Link}
-							to="/apps/mailbox"
-							onClick={userMenuClose}
-							role="button"
-						>
-							<ListItemIcon>
-								<FuseSvgIcon>lucide:mail</FuseSvgIcon>
-							</ListItemIcon>
-							<ListItemText primary="Inbox" />
-						</MenuItem>
-						<MenuItem onClick={handleSignOut}>
-							<ListItemIcon>
-								<FuseSvgIcon>lucide:square-arrow-right</FuseSvgIcon>
-							</ListItemIcon>
-							<ListItemText primary="Sign out" />
-						</MenuItem>
-					</>
-				)}
-			</Popover>
+				{isGuest
+					? [
+							<MenuItem
+								key="sign-in"
+								component={Link}
+								to="/sign-in"
+								role="button"
+							>
+								<ListItemIcon>
+									<FuseSvgIcon>lucide:lock</FuseSvgIcon>
+								</ListItemIcon>
+								<ListItemText primary="Sign In" />
+							</MenuItem>,
+							<MenuItem
+								key="sign-up"
+								component={Link}
+								to="/sign-up"
+								role="button"
+							>
+								<ListItemIcon>
+									<FuseSvgIcon>lucide:user-plus</FuseSvgIcon>
+								</ListItemIcon>
+								<ListItemText primary="Sign up" />
+							</MenuItem>
+						]
+					: [
+							<MenuItem
+								key="profile"
+								component={Link}
+								to="/apps/profile"
+								onClick={userMenuClose}
+								role="button"
+							>
+								<ListItemIcon>
+									<FuseSvgIcon>lucide:circle-user</FuseSvgIcon>
+								</ListItemIcon>
+								<ListItemText primary="My Profile" />
+							</MenuItem>,
+							<MenuItem
+								key="inbox"
+								component={Link}
+								to="/apps/mailbox"
+								onClick={userMenuClose}
+								role="button"
+							>
+								<ListItemIcon>
+									<FuseSvgIcon>lucide:mail</FuseSvgIcon>
+								</ListItemIcon>
+								<ListItemText primary="Inbox" />
+							</MenuItem>,
+							<MenuItem
+								key="sign-out"
+								onClick={handleSignOut}
+							>
+								<ListItemIcon>
+									<FuseSvgIcon>lucide:square-arrow-right</FuseSvgIcon>
+								</ListItemIcon>
+								<ListItemText primary="Sign out" />
+							</MenuItem>
+						]}
+			</Menu>
 		</>
 	);
 }
