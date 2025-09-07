@@ -1,11 +1,11 @@
 import { FuseSettingsConfigType } from '@fuse/core/FuseSettings/FuseSettings';
 import { useMainTheme } from '@fuse/core/FuseSettings/hooks/fuseThemeHooks';
 import useFuseSettings from '@fuse/core/FuseSettings/hooks/useFuseSettings';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { FuseThemeOption } from '@fuse/core/FuseThemeSelector/ThemePreview';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { Moon, Sun } from 'lucide-react';
 import React, { useState } from 'react';
 // import { useSnackbar } from 'notistack';
 
@@ -61,8 +61,8 @@ function LightDarkModeToggle(props: LightDarkModeToggleProps) {
 				onClick={handleClick}
 				className={className}
 			>
-				{mainTheme.palette.mode === 'light' && <FuseSvgIcon>lucide:sun</FuseSvgIcon>}
-				{mainTheme.palette.mode === 'dark' && <FuseSvgIcon>lucide:moon</FuseSvgIcon>}
+				{mainTheme.palette.mode === 'light' && <Sun />}
+				{mainTheme.palette.mode === 'dark' && <Moon />}
 			</IconButton>
 			<Menu
 				id="light-dark-toggle-menu"

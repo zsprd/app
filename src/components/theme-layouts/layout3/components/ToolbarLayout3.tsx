@@ -1,18 +1,18 @@
+import ToolbarTheme from '@/contexts/ToolbarTheme';
+import useFuseLayoutSettings from '@fuse/core/FuseLayout/useFuseLayoutSettings';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import clsx from 'clsx';
 import { memo } from 'react';
 import NavbarToggleButton from 'src/components/theme-layouts/components/navbar/NavbarToggleButton';
-import useFuseLayoutSettings from '@fuse/core/FuseLayout/useFuseLayoutSettings';
+import useThemeMediaQuery from '../../../../@fuse/hooks/useThemeMediaQuery';
 import AdjustFontSize from '../../components/AdjustFontSize';
 import FullScreenToggle from '../../components/FullScreenToggle';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
-import NavigationSearch from '../../components/navigation/NavigationSearch';
-import UserMenu from '../../components/UserMenu';
-import QuickPanelToggleButton from '../../components/quickPanel/QuickPanelToggleButton';
 import Logo from '../../components/Logo';
-import useThemeMediaQuery from '../../../../@fuse/hooks/useThemeMediaQuery';
-import ToolbarTheme from '@/contexts/ToolbarTheme';
+import NavigationSearch from '../../components/navigation/NavigationSearch';
+import QuickPanelToggleButton from '../../components/quickPanel/QuickPanelToggleButton';
+import UserMenu from '../../components/UserMenu';
 
 type ToolbarLayout3Props = {
 	className?: string;
@@ -53,17 +53,6 @@ function ToolbarLayout3(props: ToolbarLayout3Props) {
 						<UserMenu
 							className="border-divider border border-solid"
 							dense
-							arrowIcon="lucide:chevron-down"
-							popoverProps={{
-								anchorOrigin: {
-									vertical: 'bottom',
-									horizontal: 'center'
-								},
-								transformOrigin: {
-									vertical: 'top',
-									horizontal: 'center'
-								}
-							}}
 						/>
 					)}
 				</Toolbar>

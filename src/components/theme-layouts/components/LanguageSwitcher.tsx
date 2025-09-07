@@ -1,4 +1,3 @@
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { LanguageType } from '@i18n/I18nContext';
 import useI18n from '@i18n/useI18n';
 import IconButton from '@mui/material/IconButton';
@@ -6,6 +5,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { Languages } from 'lucide-react';
 import { useState } from 'react';
 
 /**
@@ -33,7 +33,7 @@ function LanguageSwitcher() {
 	return (
 		<>
 			<IconButton onClick={langMenuClick}>
-				<FuseSvgIcon>lucide:languages</FuseSvgIcon>
+				<Languages size={16} />
 			</IconButton>
 			<Menu
 				id="language-switcher-menu"

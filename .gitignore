@@ -67,3 +67,6 @@ amplifytools.xcconfig
 
 .github/
 .copilotignore
+/generated/prisma
+
+/generated/prisma

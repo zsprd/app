@@ -1,15 +1,15 @@
 'use client';
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { useState } from 'react';
-import * as React from 'react';
 import FuseLoading from '@fuse/core/FuseLoading';
-import { Tabs, Tab } from '@mui/material';
+import FusePageSimple from '@fuse/core/FusePageSimple';
+import { Tab, Tabs } from '@mui/material';
+import * as React from 'react';
+import { useState } from 'react';
+import { useGetWidgets } from '../../api/hooks/widgets/useGetWidgets';
 import ProjectDashboardAppHeader from '../ui/ProjectDashboardAppHeader';
+import ProjectSelector from '../ui/ProjectSelector';
+import BudgetTab from '../ui/tabs/budget/BudgetTab';
 import HomeTab from '../ui/tabs/home/HomeTab';
 import TeamTab from '../ui/tabs/team/TeamTab';
-import BudgetTab from '../ui/tabs/budget/BudgetTab';
-import { useGetWidgets } from '../../api/hooks/widgets/useGetWidgets';
-import ProjectSelector from '../ui/ProjectSelector';
 
 /**
  * The ProjectDashboardApp page.
@@ -29,6 +29,7 @@ function ProjectDashboardAppView() {
 
 	return (
 		<FusePageSimple
+			scroll="content"
 			header={<ProjectDashboardAppHeader />}
 			content={
 				<div className="w-full pt-4 sm:pt-6">

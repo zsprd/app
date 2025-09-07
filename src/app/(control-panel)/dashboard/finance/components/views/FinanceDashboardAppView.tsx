@@ -1,14 +1,14 @@
 'use client';
+import FuseLoading from '@fuse/core/FuseLoading';
 import FusePageSimple from '@fuse/core/FusePageSimple';
 import { motion } from 'motion/react';
-import FuseLoading from '@fuse/core/FuseLoading';
-import FinanceDashboardAppHeader from '../ui/FinanceDashboardAppHeader';
-import PreviousStatementWidget from '../ui/widgets/PreviousStatementWidget';
-import CurrentStatementWidget from '../ui/widgets/CurrentStatementWidget';
-import AccountBalanceWidget from '../ui/widgets/AccountBalanceWidget';
-import RecentTransactionsWidget from '../ui/widgets/RecentTransactionsWidget';
-import BudgetWidget from '../ui/widgets/BudgetWidget';
 import { useGetWidgets } from '../../api/hooks/widgets/useGetWidgets';
+import FinanceDashboardAppHeader from '../ui/FinanceDashboardAppHeader';
+import AccountBalanceWidget from '../ui/widgets/AccountBalanceWidget';
+import BudgetWidget from '../ui/widgets/BudgetWidget';
+import CurrentStatementWidget from '../ui/widgets/CurrentStatementWidget';
+import PreviousStatementWidget from '../ui/widgets/PreviousStatementWidget';
+import RecentTransactionsWidget from '../ui/widgets/RecentTransactionsWidget';
 
 const container = {
 	show: {
@@ -39,6 +39,7 @@ function FinanceDashboardAppView() {
 
 	return (
 		<FusePageSimple
+			scroll="content"
 			header={<FinanceDashboardAppHeader />}
 			content={
 				<div className="w-full px-4 pt-4 pb-6 md:px-8">

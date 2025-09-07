@@ -1,19 +1,19 @@
 'use client';
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { motion } from 'motion/react';
-import Typography from '@mui/material/Typography';
 import FuseLoading from '@fuse/core/FuseLoading';
-import AnalyticsDashboardAppHeader from '../ui/AnalyticsDashboardAppHeader';
-import VisitorsOverviewWidget from '../ui/widgets/VisitorsOverviewWidget';
-import ConversionsWidget from '../ui/widgets/ConversionsWidget';
-import ImpressionsWidget from '../ui/widgets/ImpressionsWidget';
-import VisitsWidget from '../ui/widgets/VisitsWidget';
-import VisitorsVsPageViewsWidget from '../ui/widgets/VisitorsVsPageViewsWidget';
-import NewVsReturningWidget from '../ui/widgets/NewVsReturningWidget';
-import AgeWidget from '../ui/widgets/AgeWidget';
-import LanguageWidget from '../ui/widgets/LanguageWidget';
-import GenderWidget from '../ui/widgets/GenderWidget';
+import FusePageSimple from '@fuse/core/FusePageSimple';
+import Typography from '@mui/material/Typography';
+import { motion } from 'motion/react';
 import { useGetWidgets } from '../../api/hooks/widgets/useGetWidgets';
+import AnalyticsDashboardAppHeader from '../ui/AnalyticsDashboardAppHeader';
+import AgeWidget from '../ui/widgets/AgeWidget';
+import ConversionsWidget from '../ui/widgets/ConversionsWidget';
+import GenderWidget from '../ui/widgets/GenderWidget';
+import ImpressionsWidget from '../ui/widgets/ImpressionsWidget';
+import LanguageWidget from '../ui/widgets/LanguageWidget';
+import NewVsReturningWidget from '../ui/widgets/NewVsReturningWidget';
+import VisitorsOverviewWidget from '../ui/widgets/VisitorsOverviewWidget';
+import VisitorsVsPageViewsWidget from '../ui/widgets/VisitorsVsPageViewsWidget';
+import VisitsWidget from '../ui/widgets/VisitsWidget';
 
 const container = {
 	show: {
@@ -40,6 +40,7 @@ function AnalyticsDashboardAppView() {
 
 	return (
 		<FusePageSimple
+			scroll="content"
 			header={<AnalyticsDashboardAppHeader />}
 			content={
 				<motion.div

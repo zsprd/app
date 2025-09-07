@@ -1,0 +1,709 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model accounts {
+  id                String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id           String              @db.Uuid
+  institution_id    String?             @db.Uuid
+  plaid_account_id  String?             @db.VarChar(255)
+  name              String              @db.VarChar(255)
+  official_name     String?             @db.VarChar(255)
+  type              account_type
+  subtype           account_subtype?
+  mask              String?             @db.VarChar(4)
+  currency          String              @default("USD") @db.Char(3)
+  is_active         Boolean             @default(true)
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime            @default(now()) @db.Timestamptz(6)
+  institutions      institutions?       @relation(fields: [institution_id], references: [id], onUpdate: NoAction)
+  users             users               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  alerts            alerts[]
+  cash_transactions cash_transactions[]
+  holdings          holdings[]
+  import_jobs       import_jobs[]
+  positions         positions[]
+  transactions      transactions[]
+
+  @@index([is_active], map: "idx_accounts_active")
+  @@index([institution_id], map: "idx_accounts_institution_id")
+  @@index([plaid_account_id], map: "idx_accounts_plaid_id")
+  @@index([type], map: "idx_accounts_type")
+  @@index([user_id, is_active], map: "idx_accounts_user_active")
+  @@index([user_id], map: "idx_accounts_user_id")
+}
+
+model alerts {
+  id                 String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id            String              @db.Uuid
+  account_id         String?             @db.Uuid
+  security_id        String?             @db.Uuid
+  type               alert_type
+  status             alert_status        @default(active)
+  name               String              @db.VarChar(255)
+  description        String?
+  threshold_value    Decimal?            @db.Decimal(15, 4)
+  threshold_operator threshold_operator?
+  frequency          alert_frequency     @default(daily)
+  current_value      Decimal?            @db.Decimal(15, 4)
+  last_triggered_at  DateTime?           @db.Timestamptz(6)
+  trigger_count      Int                 @default(0)
+  created_at         DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime            @default(now()) @db.Timestamptz(6)
+  accounts           accounts?           @relation(fields: [account_id], references: [id], onUpdate: NoAction)
+  securities         securities?         @relation(fields: [security_id], references: [id], onUpdate: NoAction)
+  users              users               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  notifications      notifications[]
+
+  @@index([account_id], map: "idx_alerts_account_id")
+  @@index([frequency], map: "idx_alerts_frequency")
+  @@index([last_triggered_at(sort: Desc)], map: "idx_alerts_last_triggered")
+  @@index([security_id], map: "idx_alerts_security_id")
+  @@index([status], map: "idx_alerts_status")
+  @@index([type], map: "idx_alerts_type")
+  @@index([user_id], map: "idx_alerts_user_id")
+  @@index([user_id, status], map: "idx_alerts_user_status")
+}
+
+model audit_logs {
+  id            String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id       String?      @db.Uuid
+  action        audit_action
+  resource_type String       @db.VarChar(100)
+  resource_id   String?      @db.Uuid
+  old_values    Json?
+  new_values    Json?
+  metadata      Json?
+  ip_address    String?      @db.Inet
+  user_agent    String?
+  request_id    String?      @db.VarChar(255)
+  created_at    DateTime     @default(now()) @db.Timestamptz(6)
+  users         users?       @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+
+  @@index([action], map: "idx_audit_logs_action")
+  @@index([created_at(sort: Desc)], map: "idx_audit_logs_created_at")
+  @@index([metadata], map: "idx_audit_logs_metadata_gin", type: Gin)
+  @@index([new_values], map: "idx_audit_logs_new_values_gin", type: Gin)
+  @@index([old_values], map: "idx_audit_logs_old_values_gin", type: Gin)
+  @@index([resource_type, resource_id], map: "idx_audit_logs_resource")
+  @@index([resource_id], map: "idx_audit_logs_resource_id")
+  @@index([resource_type], map: "idx_audit_logs_resource_type")
+  @@index([user_id, action], map: "idx_audit_logs_user_action")
+  @@index([user_id], map: "idx_audit_logs_user_id")
+}
+
+model benchmarks {
+  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  symbol      String   @unique @db.VarChar(20)
+  name        String   @db.VarChar(255)
+  description String?
+  currency    String   @default("USD") @db.Char(3)
+  asset_class String?  @db.VarChar(50)
+  region      String?  @db.VarChar(50)
+  is_default  Boolean  @default(false)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([asset_class], map: "idx_benchmarks_asset_class")
+  @@index([currency], map: "idx_benchmarks_currency")
+  @@index([symbol], map: "idx_benchmarks_symbol")
+}
+
+model cash_transactions {
+  id                   String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  account_id           String                @db.Uuid
+  type                 cash_transaction_type
+  amount               Decimal               @db.Decimal(15, 2)
+  description          String?
+  category             String?               @db.VarChar(100)
+  merchant_name        String?               @db.VarChar(255)
+  date                 DateTime              @db.Date
+  pending              Boolean               @default(false)
+  plaid_transaction_id String?               @db.VarChar(255)
+  plaid_category       String[]
+  created_at           DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime              @default(now()) @db.Timestamptz(6)
+  accounts             accounts              @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([account_id, date(sort: Desc)], map: "idx_cash_transactions_account_date")
+  @@index([account_id], map: "idx_cash_transactions_account_id")
+  @@index([date(sort: Desc)], map: "idx_cash_transactions_date")
+  @@index([pending], map: "idx_cash_transactions_pending")
+  @@index([plaid_category], map: "idx_cash_transactions_plaid_category_gin", type: Gin)
+  @@index([plaid_transaction_id], map: "idx_cash_transactions_plaid_id")
+  @@index([type], map: "idx_cash_transactions_type")
+}
+
+model exchange_rates {
+  id             String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  base_currency  String      @db.Char(3)
+  quote_currency String      @db.Char(3)
+  date           DateTime    @db.Date
+  rate           Decimal     @db.Decimal(15, 6)
+  source         data_source
+  created_at     DateTime    @default(now()) @db.Timestamptz(6)
+
+  @@unique([base_currency, quote_currency, date])
+  @@index([base_currency], map: "idx_exchange_rates_base")
+  @@index([base_currency, quote_currency, date(sort: Desc)], map: "idx_exchange_rates_base_quote_date")
+  @@index([date(sort: Desc)], map: "idx_exchange_rates_date")
+  @@index([quote_currency], map: "idx_exchange_rates_quote")
+}
+
+model holdings {
+  id                   String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  account_id           String     @db.Uuid
+  security_id          String     @db.Uuid
+  quantity             Decimal    @db.Decimal(15, 6)
+  cost_basis_per_share Decimal?   @db.Decimal(15, 4)
+  cost_basis_total     Decimal?   @db.Decimal(15, 2)
+  market_value         Decimal?   @db.Decimal(15, 2)
+  currency             String     @db.Char(3)
+  as_of_date           DateTime   @db.Date
+  plaid_account_id     String?    @db.VarChar(255)
+  plaid_security_id    String?    @db.VarChar(255)
+  institution_price    Decimal?   @db.Decimal(15, 4)
+  institution_value    Decimal?   @db.Decimal(15, 2)
+  created_at           DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime   @default(now()) @db.Timestamptz(6)
+  accounts             accounts   @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  securities           securities @relation(fields: [security_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([account_id, security_id, as_of_date])
+  @@index([account_id, as_of_date(sort: Desc)], map: "idx_holdings_account_date")
+  @@index([account_id], map: "idx_holdings_account_id")
+  @@index([account_id, security_id], map: "idx_holdings_account_security")
+  @@index([as_of_date(sort: Desc)], map: "idx_holdings_as_of_date")
+  @@index([plaid_account_id], map: "idx_holdings_plaid_account")
+  @@index([security_id], map: "idx_holdings_security_id")
+}
+
+model import_jobs {
+  id                 String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id            String        @db.Uuid
+  account_id         String?       @db.Uuid
+  type               import_type
+  status             import_status @default(pending)
+  source             import_source
+  filename           String?       @db.VarChar(255)
+  file_size          BigInt?
+  file_url           String?
+  total_records      Int?
+  processed_records  Int?
+  successful_records Int?
+  failed_records     Int?
+  error_message      String?
+  validation_errors  Json?
+  mapping_config     Json?
+  started_at         DateTime?     @db.Timestamptz(6)
+  completed_at       DateTime?     @db.Timestamptz(6)
+  created_at         DateTime      @default(now()) @db.Timestamptz(6)
+  accounts           accounts?     @relation(fields: [account_id], references: [id], onUpdate: NoAction)
+  users              users         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([account_id], map: "idx_import_jobs_account_id")
+  @@index([created_at(sort: Desc)], map: "idx_import_jobs_created_at")
+  @@index([mapping_config], map: "idx_import_jobs_mapping_config_gin", type: Gin)
+  @@index([source], map: "idx_import_jobs_source")
+  @@index([status], map: "idx_import_jobs_status")
+  @@index([type], map: "idx_import_jobs_type")
+  @@index([user_id], map: "idx_import_jobs_user_id")
+  @@index([user_id, status], map: "idx_import_jobs_user_status")
+  @@index([validation_errors], map: "idx_import_jobs_validation_errors_gin", type: Gin)
+}
+
+model institutions {
+  id                    String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name                  String        @db.VarChar(255)
+  country               String        @db.Char(2)
+  url                   String?       @db.VarChar(255)
+  logo                  String?
+  primary_color         String?       @db.VarChar(7)
+  plaid_institution_id  String?       @unique @db.VarChar(255)
+  supports_investments  Boolean       @default(false)
+  supports_transactions Boolean       @default(false)
+  created_at            DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime      @default(now()) @db.Timestamptz(6)
+  accounts              accounts[]
+  plaid_items           plaid_items[]
+
+  @@index([country], map: "idx_institutions_country")
+  @@index([plaid_institution_id], map: "idx_institutions_plaid_id")
+}
+
+model market_data {
+  id             String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  security_id    String      @db.Uuid
+  date           DateTime    @db.Date
+  open           Decimal?    @db.Decimal(15, 4)
+  high           Decimal?    @db.Decimal(15, 4)
+  low            Decimal?    @db.Decimal(15, 4)
+  close          Decimal     @db.Decimal(15, 4)
+  volume         BigInt?
+  adjusted_close Decimal?    @db.Decimal(15, 4)
+  currency       String      @db.Char(3)
+  source         data_source
+  created_at     DateTime    @default(now()) @db.Timestamptz(6)
+  securities     securities  @relation(fields: [security_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([security_id, date])
+  @@index([currency], map: "idx_market_data_currency")
+  @@index([date(sort: Desc)], map: "idx_market_data_date")
+  @@index([security_id, date(sort: Desc), close], map: "idx_market_data_price_analysis")
+  @@index([security_id, date(sort: Desc)], map: "idx_market_data_security_date")
+  @@index([security_id], map: "idx_market_data_security_id")
+  @@index([source], map: "idx_market_data_source")
+}
+
+model notifications {
+  id         String               @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id    String               @db.Uuid
+  alert_id   String?              @db.Uuid
+  type       notification_type
+  channel    notification_channel
+  title      String               @db.VarChar(255)
+  message    String
+  data       Json?
+  sent_at    DateTime?            @db.Timestamptz(6)
+  read_at    DateTime?            @db.Timestamptz(6)
+  clicked_at DateTime?            @db.Timestamptz(6)
+  created_at DateTime             @default(now()) @db.Timestamptz(6)
+  alerts     alerts?              @relation(fields: [alert_id], references: [id], onUpdate: NoAction)
+  users      users                @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([alert_id], map: "idx_notifications_alert_id")
+  @@index([channel], map: "idx_notifications_channel")
+  @@index([created_at(sort: Desc)], map: "idx_notifications_created_at")
+  @@index([data], map: "idx_notifications_data_gin", type: Gin)
+  @@index([read_at], map: "idx_notifications_read_at")
+  @@index([type], map: "idx_notifications_type")
+  @@index([user_id], map: "idx_notifications_user_id")
+}
+
+model plaid_items {
+  id                 String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id            String            @db.Uuid
+  plaid_item_id      String            @unique @db.VarChar(255)
+  plaid_access_token String
+  institution_id     String            @db.Uuid
+  status             plaid_item_status @default(active)
+  webhook_url        String?
+  error_code         String?           @db.VarChar(100)
+  error_message      String?
+  cursor             String?
+  last_sync_at       DateTime?         @db.Timestamptz(6)
+  created_at         DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime          @default(now()) @db.Timestamptz(6)
+  institutions       institutions      @relation(fields: [institution_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users              users             @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([institution_id], map: "idx_plaid_items_institution_id")
+  @@index([last_sync_at(sort: Desc)], map: "idx_plaid_items_last_sync")
+  @@index([plaid_item_id], map: "idx_plaid_items_plaid_id")
+  @@index([status], map: "idx_plaid_items_status")
+  @@index([user_id], map: "idx_plaid_items_user_id")
+}
+
+model positions {
+  id                   String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  account_id           String     @db.Uuid
+  security_id          String     @db.Uuid
+  quantity             Decimal    @db.Decimal(15, 6)
+  average_cost         Decimal?   @db.Decimal(15, 4)
+  unrealized_gain_loss Decimal?   @db.Decimal(15, 2)
+  lot_method           lot_method @default(fifo)
+  updated_at           DateTime   @default(now()) @db.Timestamptz(6)
+  accounts             accounts   @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  securities           securities @relation(fields: [security_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([account_id, security_id])
+  @@index([account_id], map: "idx_positions_account_id")
+  @@index([account_id, security_id], map: "idx_positions_account_security")
+  @@index([security_id], map: "idx_positions_security_id")
+  @@index([updated_at(sort: Desc)], map: "idx_positions_updated_at")
+}
+
+model reports {
+  id           String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id      String        @db.Uuid
+  type         report_type
+  format       report_format
+  status       report_status @default(pending)
+  name         String        @db.VarChar(255)
+  description  String?
+  parameters   Json?
+  file_url     String?
+  file_size    BigInt?
+  expires_at   DateTime?     @db.Timestamptz(6)
+  generated_at DateTime?     @db.Timestamptz(6)
+  created_at   DateTime      @default(now()) @db.Timestamptz(6)
+  users        users         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([created_at(sort: Desc)], map: "idx_reports_created_at")
+  @@index([expires_at], map: "idx_reports_expires_at")
+  @@index([format], map: "idx_reports_format")
+  @@index([generated_at(sort: Desc)], map: "idx_reports_generated_at")
+  @@index([parameters], map: "idx_reports_parameters_gin", type: Gin)
+  @@index([status], map: "idx_reports_status")
+  @@index([type], map: "idx_reports_type")
+  @@index([user_id], map: "idx_reports_user_id")
+  @@index([user_id, type], map: "idx_reports_user_type")
+}
+
+model securities {
+  id                  String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  symbol              String         @db.VarChar(20)
+  name                String         @db.VarChar(255)
+  type                security_type
+  currency            String         @default("USD") @db.Char(3)
+  exchange            String?        @db.VarChar(10)
+  country             String?        @db.Char(2)
+  sector              String?        @db.VarChar(100)
+  industry            String?        @db.VarChar(100)
+  cusip               String?        @db.VarChar(9)
+  isin                String?        @db.VarChar(12)
+  sedol               String?        @db.VarChar(7)
+  plaid_security_id   String?        @db.VarChar(255)
+  alphavantage_symbol String?        @db.VarChar(20)
+  is_active           Boolean        @default(true)
+  created_at          DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime       @default(now()) @db.Timestamptz(6)
+  alerts              alerts[]
+  holdings            holdings[]
+  market_data         market_data[]
+  positions           positions[]
+  transactions        transactions[]
+
+  @@unique([symbol, currency])
+  @@index([is_active], map: "idx_securities_active")
+  @@index([alphavantage_symbol], map: "idx_securities_alphavantage")
+  @@index([currency], map: "idx_securities_currency")
+  @@index([exchange], map: "idx_securities_exchange")
+  @@index([plaid_security_id], map: "idx_securities_plaid_id")
+  @@index([symbol], map: "idx_securities_symbol")
+  @@index([symbol, currency], map: "idx_securities_symbol_currency")
+  @@index([type], map: "idx_securities_type")
+}
+
+model subscriptions {
+  id                     String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                String              @unique @db.Uuid
+  plan                   subscription_plan   @default(free)
+  status                 subscription_status @default(active)
+  current_period_start   DateTime            @db.Timestamptz(6)
+  current_period_end     DateTime            @db.Timestamptz(6)
+  trial_end              DateTime?           @db.Timestamptz(6)
+  feature_flags          Json?
+  api_quota_limit        Int?
+  api_quota_used         Int                 @default(0)
+  stripe_customer_id     String?             @db.VarChar(255)
+  stripe_subscription_id String?             @db.VarChar(255)
+  created_at             DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime            @default(now()) @db.Timestamptz(6)
+  users                  users               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([current_period_end], map: "idx_subscriptions_current_period_end")
+  @@index([feature_flags], map: "idx_subscriptions_feature_flags_gin", type: Gin)
+  @@index([plan], map: "idx_subscriptions_plan")
+  @@index([status], map: "idx_subscriptions_status")
+  @@index([stripe_customer_id], map: "idx_subscriptions_stripe_customer")
+  @@index([stripe_subscription_id], map: "idx_subscriptions_stripe_subscription")
+  @@index([user_id], map: "idx_subscriptions_user_id")
+}
+
+model transactions {
+  id                   String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  account_id           String            @db.Uuid
+  security_id          String?           @db.Uuid
+  type                 transaction_type
+  side                 transaction_side?
+  quantity             Decimal?          @db.Decimal(15, 6)
+  price                Decimal?          @db.Decimal(15, 4)
+  amount               Decimal           @db.Decimal(15, 2)
+  fees                 Decimal?          @db.Decimal(15, 2)
+  tax                  Decimal?          @db.Decimal(15, 2)
+  trade_date           DateTime          @db.Date
+  settlement_date      DateTime?         @db.Date
+  plaid_transaction_id String?           @db.VarChar(255)
+  transaction_currency String            @db.Char(3)
+  fx_rate              Decimal?          @db.Decimal(15, 6)
+  description          String?
+  memo                 String?
+  category             String?           @db.VarChar(100)
+  subcategory          String?           @db.VarChar(100)
+  source               data_source
+  created_at           DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime          @default(now()) @db.Timestamptz(6)
+  accounts             accounts          @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  securities           securities?       @relation(fields: [security_id], references: [id], onUpdate: NoAction)
+
+  @@index([account_id, trade_date(sort: Desc)], map: "idx_transactions_account_date")
+  @@index([account_id], map: "idx_transactions_account_id")
+  @@index([account_id, security_id, trade_date(sort: Desc), type, side], map: "idx_transactions_performance_analysis")
+  @@index([plaid_transaction_id], map: "idx_transactions_plaid_id")
+  @@index([security_id, trade_date(sort: Desc)], map: "idx_transactions_security_date")
+  @@index([security_id], map: "idx_transactions_security_id")
+  @@index([settlement_date], map: "idx_transactions_settlement_date")
+  @@index([side], map: "idx_transactions_side")
+  @@index([source], map: "idx_transactions_source")
+  @@index([trade_date(sort: Desc)], map: "idx_transactions_trade_date")
+  @@index([type], map: "idx_transactions_type")
+}
+
+model user_sessions {
+  id               String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id          String   @db.Uuid
+  access_token     String
+  refresh_token    String
+  expires_at       DateTime @db.Timestamptz(6)
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  last_accessed_at DateTime @default(now()) @db.Timestamptz(6)
+  ip_address       String?  @db.Inet
+  user_agent       String?
+  users            users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([access_token], map: "idx_user_sessions_access_token")
+  @@index([expires_at], map: "idx_user_sessions_expires_at")
+  @@index([user_id], map: "idx_user_sessions_user_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model users {
+  id             String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email          String          @unique @db.VarChar(255)
+  password_hash  String          @db.VarChar(255)
+  name           String          @db.VarChar(255)
+  base_currency  String          @default("USD") @db.Char(3)
+  timezone       String          @default("UTC") @db.VarChar(50)
+  theme          String          @default("light") @db.VarChar(10)
+  locale         String          @default("en-US") @db.VarChar(10)
+  email_verified Boolean         @default(false)
+  created_at     DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime        @default(now()) @db.Timestamptz(6)
+  last_login_at  DateTime?       @db.Timestamptz(6)
+  accounts       accounts[]
+  alerts         alerts[]
+  audit_logs     audit_logs[]
+  import_jobs    import_jobs[]
+  notifications  notifications[]
+  plaid_items    plaid_items[]
+  reports        reports[]
+  subscriptions  subscriptions?
+  user_sessions  user_sessions[]
+
+  @@index([created_at], map: "idx_users_created_at")
+  @@index([email], map: "idx_users_email")
+}
+
+enum account_subtype {
+  brokerage
+  ira
+  roth_ira
+  k               @map("401k")
+  b               @map("403b")
+  checking
+  savings
+  money_market
+  credit_card
+  mortgage
+  student
+  cash_management
+  crypto_exchange
+}
+
+enum account_type {
+  investment
+  depository
+  credit
+  loan
+  other
+}
+
+enum alert_frequency {
+  real_time
+  hourly
+  daily
+  weekly
+}
+
+enum alert_status {
+  active
+  paused
+  triggered
+  disabled
+}
+
+enum alert_type {
+  price_change
+  portfolio_value
+  allocation_drift
+  drawdown
+  volatility
+  performance
+}
+
+enum audit_action {
+  create
+  update
+  delete
+  login
+  logout
+  import
+  export
+  sync
+}
+
+enum cash_transaction_type {
+  purchase
+  payment
+  transfer
+  deposit
+  withdrawal
+  fee
+  interest
+  dividend
+  other
+}
+
+enum data_source {
+  alphavantage
+  plaid
+  manual
+  calculated
+}
+
+enum import_source {
+  csv_upload
+  plaid
+  alphavantage
+  manual
+}
+
+enum import_status {
+  pending
+  processing
+  completed
+  failed
+  cancelled
+}
+
+enum import_type {
+  transactions
+  holdings
+  accounts
+  market_data
+}
+
+enum lot_method {
+  fifo
+  lifo
+  average_cost
+  specific_id
+}
+
+enum notification_channel {
+  in_app
+  email
+  push
+}
+
+enum notification_type {
+  alert
+  system
+  import
+  error
+  welcome
+}
+
+enum plaid_item_status {
+  active
+  inactive
+  error
+  expired
+}
+
+enum report_format {
+  pdf
+  csv
+  xlsx
+  json
+}
+
+enum report_status {
+  pending
+  generating
+  completed
+  failed
+  expired
+}
+
+enum report_type {
+  portfolio_summary
+  performance_analysis
+  risk_analysis
+  holdings_detail
+  transaction_history
+  tax_summary
+}
+
+enum security_type {
+  equity
+  etf
+  mutual_fund
+  bond
+  option
+  cryptocurrency
+  cash
+  commodity
+  other
+}
+
+enum subscription_plan {
+  free
+  standard
+  premium
+}
+
+enum subscription_status {
+  active
+  past_due
+  cancelled
+  trialing
+  incomplete
+}
+
+enum threshold_operator {
+  gt
+  lt
+  gte
+  lte
+  eq
+  ne
+}
+
+enum transaction_side {
+  buy
+  sell
+}
+
+enum transaction_type {
+  buy
+  sell
+  dividend
+  interest
+  fee
+  transfer_in
+  transfer_out
+  split
+  merger
+  spinoff
+  deposit
+  withdrawal
+  adjustment
+  other
+}

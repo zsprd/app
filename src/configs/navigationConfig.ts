@@ -92,6 +92,13 @@ const navigationConfig: FuseNavItemType[] = [
 				type: 'item',
 				icon: 'lucide:link',
 				url: '/portfolios/connections'
+			},
+			{
+				id: 'portfolios.optimization',
+				title: 'Optimization',
+				type: 'item',
+				icon: 'lucide:sliders-horizontal',
+				url: '/portfolios/optimization'
 			}
 		]
 	},
@@ -123,13 +130,6 @@ const navigationConfig: FuseNavItemType[] = [
 				type: 'item',
 				icon: 'lucide:shield',
 				url: '/analytics/risk'
-			},
-			{
-				id: 'analytics.optimization',
-				title: 'Optimization',
-				type: 'item',
-				icon: 'lucide:sliders-horizontal',
-				url: '/analytics/optimization'
 			},
 			{
 				id: 'analytics.insights',

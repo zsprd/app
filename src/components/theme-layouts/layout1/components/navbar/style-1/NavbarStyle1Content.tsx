@@ -3,7 +3,6 @@ import { styled } from '@mui/material/styles';
 import clsx from 'clsx';
 import { memo } from 'react';
 import Navigation from 'src/components/theme-layouts/components/navigation/Navigation';
-import Logo from '../../../../components/Logo';
 
 const Root = styled('div')(({ theme }) => ({
 	backgroundColor: theme.vars.palette.background.default,
@@ -45,7 +44,11 @@ function NavbarStyle1Content(props: NavbarStyle1ContentProps) {
 	return (
 		<Root className={clsx('flex h-full flex-auto flex-col overflow-hidden', className)}>
 			<div className="flex h-12 shrink-0 flex-row items-center px-5 md:h-16">
-				<Logo />
+				<img
+					className="my-4 w-40"
+					src="/assets/images/logo/logo-text.svg"
+					alt="logo"
+				/>
 			</div>
 
 			<StyledContent
