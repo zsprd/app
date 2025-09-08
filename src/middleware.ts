@@ -2,7 +2,7 @@ import { auth } from '@auth/authJs';
 import { NextResponse } from 'next/server';
 
 // Define protected and public routes
-const protectedRoutes = ['/dashboard', '/portfolios', '/analytics', '/monitoring', '/profile'];
+const protectedRoutes = ['/dashboard', '/portfolios', '/analytics', '/monitoring', '/user'];
 
 const authRoutes = ['/sign-in', '/sign-up', '/sign-out', '/forgot-password', '/reset-password'];
 

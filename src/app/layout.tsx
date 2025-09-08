@@ -1,23 +1,26 @@
+import { auth } from '@auth/authJs';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import clsx from 'clsx';
-import 'src/styles/splash-screen.css';
+import { SessionProvider } from 'next-auth/react';
 import 'src/styles/index.css';
-import '../../public/assets/fonts/material-design-icons/MaterialIconsOutlined.css';
+import 'src/styles/splash-screen.css';
 import '../../public/assets/fonts/Geist/geist.css';
+import '../../public/assets/fonts/material-design-icons/MaterialIconsOutlined.css';
 import '../../public/assets/fonts/meteocons/style.css';
 import '../../public/assets/styles/prism.css';
-import { SessionProvider } from 'next-auth/react';
-import { auth } from '@auth/authJs';
 import generateMetadata from '../utils/generateMetadata';
 import App from './App';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const metadata = await generateMetadata({
-	title: 'Fuse React - NextJS',
-	description: 'Fuse React - NextJS by FuseTech',
+	title: 'ZSPRD Portfolio Analytics',
+	description:
+		'Institutional-grade portfolio analytics for high-net-worth investors. Track performance, analyze risk, and generate professional reports.',
 	cardImage: '/card.png',
 	robots: 'follow, index',
 	favicon: '/favicon.ico',
-	url: 'https://react-material.fusetheme.com'
+	url: 'https://app.zsprd.com'
 });
 
 export default async function RootLayout({
@@ -37,7 +40,7 @@ export default async function RootLayout({
 				/>
 				<meta
 					name="theme-color"
-					content="#000000"
+					content="#0a1929"
 				/>
 				<base href="/" />
 				{/*
@@ -56,14 +59,13 @@ export default async function RootLayout({
 			</head>
 			<body
 				id="root"
-				className={clsx('loading')}
+				className={clsx('loading', 'bg-gray-50', 'text-gray-900', 'antialiased')}
 			>
-				<SessionProvider
-					basePath="/auth"
-					session={session}
-				>
+				<SessionProvider session={session}>
 					<App>{children}</App>
 				</SessionProvider>
+				<Analytics />
+				<SpeedInsights />
 			</body>
 		</html>
 	);

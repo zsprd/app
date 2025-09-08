@@ -7,21 +7,21 @@ import { PartialDeep } from 'type-fest';
  * Get user by id
  */
 export async function authGetDbUser(userId: string): Promise<Response> {
-	return api.get(`auth/user/${userId}`);
+	return api.get(`mock/auth/user/${userId}`);
 }
 
 /**
  * Get user by email
  */
 export async function authGetDbUserByEmail(email: string): Promise<Response> {
-	return api.get(`auth/user-by-email/${email}`);
+	return api.get(`mock/auth/user-by-email/${email}`);
 }
 
 /**
  * Update user
  */
 export function authUpdateDbUser(user: PartialDeep<User>) {
-	return api.put(`auth/user/${user.id}`, {
+	return api.put(`mock/auth/user/${user.id}`, {
 		body: JSON.stringify(UserModel(user))
 	});
 }
@@ -30,7 +30,7 @@ export function authUpdateDbUser(user: PartialDeep<User>) {
  * Create user
  */
 export async function authCreateDbUser(user: PartialDeep<User>) {
-	return api.post('users', {
+	return api.post('mock/users', {
 		body: JSON.stringify(UserModel(user))
 	});
 }
